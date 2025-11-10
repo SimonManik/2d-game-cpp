@@ -1,6 +1,3 @@
-# Prerequisites
-*.d
-
 # Compiled Object files
 *.slo
 *.lo
@@ -11,12 +8,6 @@
 *.gch
 *.pch
 
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
@@ -24,7 +15,6 @@
 
 # Fortran module files
 *.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -37,5 +27,31 @@
 *.out
 *.app
 
-# debug information files
-*.dwo
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+
+.idea/*
+!.idea/codeStyles/
+!.idea/runConfigurations/
+*.iws
+
+.DS_Store
+**/.DS_Store
+
+/out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
