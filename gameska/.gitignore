@@ -39,7 +39,6 @@
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
-
 .idea/*
 !.idea/codeStyles/
 !.idea/runConfigurations/
