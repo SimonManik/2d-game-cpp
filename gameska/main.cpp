@@ -7,6 +7,9 @@
     #include <unistd.h>
 #endif
 
+//import modulu
+#include "backEnd//render//consoleBuffer.h"
+
 int main() {
     // Pro rozliseni os
     #ifdef _WIN32
@@ -16,6 +19,12 @@ int main() {
     #endif
 
     // Main.cpp
-    std::cout << "Hello, world!" << std::endl;
+    ConsoleBuffer buffer(10, 10);
+    buffer.clear();
+    buffer.setChar(5, 5, '@');
+    buffer.setChar(3, 3, '#');
+    buffer.display();
+
+    // end
     return 0;
 }
