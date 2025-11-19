@@ -4,19 +4,22 @@
 
 #include "item.h"
 
-Item::Item(string name, string type, int bonusPower)
+
+Item::Item(string name, string type, int bonusPower)        //constructor
     : m_name(name), m_type(type), m_bonusPower(bonusPower){
 }
 
 
-string Item::getName() const{
+string Item::getName() const{  //Returns item name
 return m_name;
 }
 
-string Item::getType() const{
+
+string Item::getType() const{  //returns item type
 return m_type;
 }
 
-int Item::getBonusPower() const{
+
+int Item::getBonusPower() const{  //returns how much strength item adds to the hero
 return m_bonusPower;
 }

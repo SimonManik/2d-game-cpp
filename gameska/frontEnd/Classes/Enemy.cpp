@@ -5,18 +5,18 @@
 #include "enemy.h"
 
 
-//Returns the name of the enemy
-std::string Enemy::getName() const {
+
+std::string Enemy::getName() const {  //Returns the name of the enemy
     return m_name;
 }
 
-//Returns the enemy's power level
-int Enemy::getStrength() const {
+
+int Enemy::getStrength() const {  //Returns the enemy's power level
     return m_strength;
 }
 
-//Checks ifd enemy is still alive
-bool Enemy::isAlive() const {
+
+bool Enemy::isAlive() const {   //Checks if enemy is still alive
     return m_Isalive;
 }
 

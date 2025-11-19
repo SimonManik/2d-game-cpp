@@ -15,13 +15,13 @@ private:
 
 
 public:
-    Enemy(string m_name, int m_strength, bool m_isAlive);
+    Enemy(string m_name, int m_strength, bool m_isAlive); // constructor
 
-    string getName() const;
+    string getName() const;    //getters
     int getStrength() const;
     bool isAlive() const;
 
-    void takeDamage(int damage);
+    void takeDamage(int damage);    //methods
     void dealDamage(int damage);
     void move(string direction);
 
