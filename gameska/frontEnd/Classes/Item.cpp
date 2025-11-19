@@ -2,7 +2,7 @@
 // Created by elisk on 19.11.2025.
 //
 
-#include "item.h"
+#include "Item.h"
 
 
 Item::Item(string name, string type, int bonusPower)        //constructor

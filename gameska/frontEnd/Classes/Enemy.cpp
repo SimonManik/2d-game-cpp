@@ -2,7 +2,7 @@
 // Created by elisk on 19.11.2025.
 //
 
-#include "enemy.h"
+#include "Enemy.h"
 
 
 
@@ -17,11 +17,11 @@ int Enemy::getStrength() const {  //Returns the enemy's power level
 
 
 bool Enemy::isAlive() const {   //Checks if enemy is still alive
-    return m_Isalive;
+    return m_isAlive;
 }
 
 void Enemy::takeDamage(int damage) {
-    if (Damage >= m_strength) {
-        m_Isalive = false;
+    if (damage >= m_strength) {
+        m_isAlive = false;
     }
 }
