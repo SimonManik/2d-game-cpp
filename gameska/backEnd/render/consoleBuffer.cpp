@@ -43,7 +43,7 @@ void ConsoleBuffer::setChar(int x, int y, char c) {
 
 void ConsoleBuffer::display() {
 #ifdef _WIN32
-    //nastaveni kurzoru na pozici (0, 0)  to samé jako \033[H na unix like
+    //nastaveni kurzoru na pozici (0, 0)  to samé jako std::printf("\033[H"); na unix like
     COORD coord = {0, 0};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
     for (int y=0; y < m_height; y++)
