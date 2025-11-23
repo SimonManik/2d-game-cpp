@@ -9,6 +9,8 @@ add_executable(gameska main.cpp
         backEnd/render/consoleBuffer.cpp
         backEnd/render/consoleBuffer.h
         frontEnd/Classes/mainInheriteClass.cpp
-        frontEnd/Classes/map.h)
+        frontEnd/Classes/map.h
+        frontEnd/Classes/map.cpp
+        frontEnd/Classes/MapBlock.cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
