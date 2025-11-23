@@ -7,6 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(gameska main.cpp
         backEnd/render/renderEngine.h
         backEnd/render/consoleBuffer.cpp
-        backEnd/render/consoleBuffer.h)
+        backEnd/render/consoleBuffer.h
+        frontEnd/Classes/mainInheriteClass.cpp
+        frontEnd/Classes/map.h
+        frontEnd/Classes/map.cpp
+        frontEnd/Classes/MapBlock.cpp
+        frontEnd/Classes/MapBlock.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
