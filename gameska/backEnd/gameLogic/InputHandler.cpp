@@ -18,6 +18,7 @@ InputHandler::~InputHandler() {
 
 bool InputHandler::kbhit() {
 #ifdef _WIN32
+    return _kbhit();
 #else
     int ch = ::getchar();
     if (ch != EOF) {
@@ -30,6 +31,7 @@ bool InputHandler::kbhit() {
 
 char InputHandler::getch() {
 #ifdef _WIN32
+    return (char)_getch();
 #else
     return ::getchar();
 #endif
