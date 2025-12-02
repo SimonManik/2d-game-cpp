@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include <chrono>
+#include <cstdio>
 #include <thread>
 #include "./../types/Vec2.h"
 
