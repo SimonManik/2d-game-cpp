@@ -13,7 +13,7 @@ Camera::Camera(int viewportW, int viewportH)
 Vec2 Camera::worldToScreen(Vec2 worldPos) const {
     Vec2 offset = worldPos - m_position;
     int screenX = offset.x + m_viewportW / 2;
-    int screenY = offset.y + m_viewportH / 2;
+    int screenY = -offset.y + m_viewportH / 2;
     return Vec2(screenX, screenY);
 }
 

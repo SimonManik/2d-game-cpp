@@ -23,9 +23,9 @@ public:
     InputHandler();
     ~InputHandler();
     Command getInput();
+    bool kbhit();
 
 private:
-    bool kbhit();
     char getch();
 };
 

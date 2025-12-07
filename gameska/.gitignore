@@ -47,6 +47,9 @@
 .DS_Store
 **/.DS_Store
 
+build/
+cmake-build-*/
+
 /out/
 .idea_modules/
 atlassian-ide-plugin.xml

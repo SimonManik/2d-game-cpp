@@ -22,10 +22,14 @@ void Game::run() {
     render();
 
     while (m_running) {
+        if (!m_inputHandler.kbhit()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            continue;
+        }
+
         Command cmd = m_inputHandler.getInput();
 
         if (cmd == Command::NONE) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
 

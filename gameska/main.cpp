@@ -1,10 +1,11 @@
 //import modulu
 #include "backEnd/gameLogic/Game.h"
+#include "backEnd/render/TerminalUtils.h"
 
 int main() {
-    const int SCREEN_W = 80;
-    const int SCREEN_H = 25;
+    auto [SCREEN_W, SCREEN_H] = TerminalUtils::getTerminalSize();
 
+    // radek minus pro rezervu textu
     Game game(SCREEN_W, SCREEN_H);
     game.run();
 
