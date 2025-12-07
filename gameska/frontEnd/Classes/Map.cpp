@@ -1,4 +1,8 @@
+
 #include "Map.h"
+#include <cstdlib> // nahodna cisla
+#include <ctime>   // Pro funkci time() aby byla náhoda pokaždé jiná
+#include "Item.h"
 
 //map resi celek - jak je velka mistnost, kde jsou zdi ci dvere
 // atd to je rozdil oproti jen map blocku
@@ -26,6 +30,10 @@ Map::~Map() {
 
 // Generovani testovaci mapy
 void Map::generateTestMap() {
+
+    // nahoda
+    std::srand(std::time(0));
+
     // 1. Nastavime pocet radku (vysku)
     gameMap.resize(height);
 
@@ -48,6 +56,14 @@ void Map::generateTestMap() {
             } else {
                 // Vytvorime PODLAHU (.), ktera je pruchozi (true)
                 newBlock = new MapBlock(x, y, 0, '.', true);
+
+                // Generovani itemu (jen pro podlahu)
+                if (std::rand() % 100 < 10) {
+                    //  nový item
+                    Item* loot = new Item("Dagger", "Weapon", 2);
+                    newBlock->setItem(loot);
+                }
+                // ---------------------------------------------------------------
             }
 
             // Ulozime pointer na novy blok do mrizky
@@ -67,3 +83,6 @@ MapBlock* Map::getBlockAt(int x, int y) {
     // Pokud jsme mimo mapu, vratime nullptr (nic)
     return nullptr;
 }
+
+
+
