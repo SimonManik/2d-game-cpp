@@ -1,0 +1,5 @@
+- explain map sys. to others
+    - items, monsters, etc. are passed to map block, then to map level and then to render engine
+    - (like hierarchy) 1. render engine 2. level 3. bblocks 4. entities
+
+- mby better file orga.
