@@ -16,6 +16,20 @@
 
 std::pair<int, int> TerminalUtils::getTerminalSize() {
 #ifdef _WIN32
+    // deklarace struktury pro ulozeni informaci o bufferu konzole
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+    // ziskani handle standardniho vystupu a naplneni struktury aktualnimi daty
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+    // vypocet sirky viditelneho okna (rozdil praveho a leveho okraje + 1)
+    int cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+    // vypocet vysky viditelneho okna (rozdil spodniho a horniho okraje + 1)
+    int rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    // vraceni vypocitanych rozmeru
+    return {cols, rows};
 #else
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
