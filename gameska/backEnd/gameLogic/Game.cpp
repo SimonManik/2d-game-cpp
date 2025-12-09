@@ -13,7 +13,13 @@ Game::Game(int screenW, int screenH)
     : m_buffer(screenW, screenH)
     , m_camera(screenW, screenH)
     , m_player(Vec2(0, 0))
+    , m_levelLogic(nullptr)
     , m_running(false) {
+    m_levelLogic = new LevelLogic();
+}
+
+Game::~Game() {
+    delete m_levelLogic;
 }
 
 void Game::run() {
@@ -47,27 +53,20 @@ void Game::run() {
 void Game::render() {
     m_buffer.clear();
 
-    // grid
-    for (int worldY = -50; worldY < 50; worldY += 5) {
-        for (int worldX = -50; worldX < 50; worldX += 5) {
-            Vec2 worldPos(worldX, worldY);
+    // TODO: implementace -> MapLogic -> Map a jednotlive bloky
 
-            if (m_camera.isVisible(worldPos)) {
-                Vec2 screenPos = m_camera.worldToScreen(worldPos);
-                m_buffer.setChar(screenPos.x, screenPos.y, '.');
-            }
-        }
-    }
-
-    // player uprostred
+    // Vykresli hrace uprostred
     Vec2 playerScreen = m_camera.worldToScreen(m_player.getPosition());
     m_buffer.setChar(playerScreen.x, playerScreen.y, m_player.getDisplayChar());
 
-    // info o poz.,
-    char info[100];
+    //staty, etc./
+    char info[200];
     sprintf(info, "Pos: (%d,%d)",
             m_player.getPosition().x,
             m_player.getPosition().y);
+
+    sprintf(info, "Level: %d",
+        m_levelLogic->getCurrentLevel());
 
     for (int i = 0; info[i] != '\0' && i < m_buffer.getWidth(); i++) {
         m_buffer.setChar(i, 0, info[i]);

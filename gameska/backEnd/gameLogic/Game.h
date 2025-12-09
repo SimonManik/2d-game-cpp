@@ -9,10 +9,12 @@
 #include "../../frontEnd/Classes/Player.h"
 #include "Camera.h"
 #include "InputHandler.h"
+#include "LevelLogic.h"
 
 class Game {
 public:
     Game(int screenW, int screenH);
+    ~Game();
     void run();
 
 private:
@@ -23,6 +25,7 @@ private:
     ConsoleBuffer m_buffer;
     Camera m_camera;
     InputHandler m_inputHandler;
+    LevelLogic* m_levelLogic;
 
     // game obj.
     Player m_player;

@@ -3,3 +3,14 @@
     - (like hierarchy) 1. render engine 2. level 3. bblocks 4. entities
 
 - mby better file orga.
+
+- chest only 1 item
+    -  take or leave
+- monster scaling by static int level
+- player scaling by exp, playerLevel
+
+- gameLoop
+- levelSystem
+- prepare RE to level system
+
+- mk new jira assi. - jindra, simon
