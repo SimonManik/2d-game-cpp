@@ -10,13 +10,13 @@
 class Rat: public Enemy {
 
 public:
-    //pass specific stats to the parent
+
     Rat() : Enemy("Rat", 10, true, 25) {
     }
 
     ~Rat() override {}
 
-    // override the attack!
+
     void attack() const override;
 };
 

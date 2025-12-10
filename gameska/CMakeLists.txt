@@ -24,6 +24,8 @@ add_executable(gameska main.cpp
         frontEnd/Classes/Player.h
         backEnd/types/Vec2.h
         frontEnd/Classes/Weapon.cpp
-        frontEnd/Classes/Weapon.h)
+        frontEnd/Classes/Weapon.h
+        frontEnd/Classes/HealingPotion.cpp
+        frontEnd/Classes/HealingPotion.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

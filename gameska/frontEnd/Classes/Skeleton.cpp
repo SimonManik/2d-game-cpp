@@ -6,7 +6,7 @@
 #include <iostream>
 
 void Skeleton::attack() const {
-    // replaces the generic Enemy::attack()
+
     std::cout << "The Skeleton shoots an arrow for " << m_strength << " damage!" << std::endl;
 
     if (m_numArrows > 0) {

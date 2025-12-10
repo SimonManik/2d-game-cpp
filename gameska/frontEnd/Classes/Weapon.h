@@ -6,8 +6,17 @@
 #define GAMESKA_WEAPON_H
 
 
-class Weapon {
-};
+#include "Item.h"
 
+// Weapon inherits from Item
+class Weapon : public Item {
+public:
+    /
+
+    Weapon(const std::string& name, int bonusPower);  // Parametric Constructor
+
+
+    std::string getDescription() const override;  // Override the description function
+};
 
 #endif //GAMESKA_WEAPON_H
