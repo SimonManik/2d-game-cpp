@@ -5,11 +5,10 @@
 #ifndef GAMESKA_GAME_H
 #define GAMESKA_GAME_H
 
-#include "./../render/consoleBuffer.h"
 #include "../../frontEnd/Classes/Player.h"
-#include "Camera.h"
 #include "InputHandler.h"
 #include "LevelLogic.h"
+#include "../render/RenderEngine.h"
 
 class Game {
 public:
@@ -18,19 +17,16 @@ public:
     void run();
 
 private:
-    void update();
-    void render();
+    void update(Command cmd);
 
-    // mopduly
-    ConsoleBuffer m_buffer;
-    Camera m_camera;
+    // modules
+    RenderEngine m_renderEngine;
     InputHandler m_inputHandler;
     LevelLogic* m_levelLogic;
 
-    // game obj.
+    // game objects
     Player m_player;
     bool m_running;
 };
-
 
 #endif //GAMESKA_GAME_H

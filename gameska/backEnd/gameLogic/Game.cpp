@@ -7,11 +7,11 @@
 #include <cstdio>
 #include <thread>
 #include "./../types/Vec2.h"
+#include "../render/RenderEngine.h"
 
 
 Game::Game(int screenW, int screenH)
-    : m_buffer(screenW, screenH)
-    , m_camera(screenW, screenH)
+    : m_renderEngine(screenW, screenH)
     , m_player(Vec2(0, 0))
     , m_levelLogic(nullptr)
     , m_running(false) {
@@ -24,8 +24,10 @@ Game::~Game() {
 
 void Game::run() {
     m_running = true;
-    m_camera.setPosition(m_player.getPosition());
-    render();
+
+    // inicializace
+    m_renderEngine.getCamera().setPosition(m_player.getPosition());
+    m_renderEngine.render(m_player, m_renderEngine.getCamera());
 
     while (m_running) {
         if (!m_inputHandler.kbhit()) {
@@ -44,33 +46,16 @@ void Game::run() {
             continue;
         }
 
-        m_player.handleCommand(cmd);
-        m_camera.setPosition(m_player.getPosition());
-        render();
+        update(cmd);
+
+        // render
+        m_renderEngine.render(m_player, m_renderEngine.getCamera());
     }
 }
 
-void Game::render() {
-    m_buffer.clear();
+void Game::update(Command cmd) {
+    m_player.handleCommand(cmd);
+    m_renderEngine.getCamera().setPosition(m_player.getPosition());
 
-    // TODO: implementace -> MapLogic -> Map a jednotlive bloky
-
-    // Vykresli hrace uprostred
-    Vec2 playerScreen = m_camera.worldToScreen(m_player.getPosition());
-    m_buffer.setChar(playerScreen.x, playerScreen.y, m_player.getDisplayChar());
-
-    //staty, etc./
-    char info[200];
-    sprintf(info, "Pos: (%d,%d)",
-            m_player.getPosition().x,
-            m_player.getPosition().y);
-
-    sprintf(info, "Level: %d",
-        m_levelLogic->getCurrentLevel());
-
-    for (int i = 0; info[i] != '\0' && i < m_buffer.getWidth(); i++) {
-        m_buffer.setChar(i, 0, info[i]);
-    }
-
-    m_buffer.display();
+    // TODO: enemies, collisions,etc.
 }

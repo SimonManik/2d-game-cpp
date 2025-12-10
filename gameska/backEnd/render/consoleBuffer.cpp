@@ -2,7 +2,7 @@
 // Created by Metoděj Janota on 11.11.2025.
 //
 
-#include "consoleBuffer.h"
+#include "ConsoleBuffer.h"
 #include <iostream>
 
 #ifdef _WIN32
