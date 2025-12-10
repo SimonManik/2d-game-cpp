@@ -1,25 +1,27 @@
-//
-// Created by elisk on 19.11.2025.
-//
-
 #include "Item.h"
 
-
-Item::Item(string name, string type, int bonusPower)        //constructor
-    : m_name(name), m_type(type), m_bonusPower(bonusPower){
+// Constructor
+Item::Item(const std::string& name, const std::string& type, int bonusPower)
+    : m_name(name), m_type(type), m_bonusPower(bonusPower) {
 }
 
-
-string Item::getName() const{  //Returns item name
-return m_name;
+// Destructor
+Item::~Item() {
+    //to do
 }
 
-
-string Item::getType() const{  //returns item type
-return m_type;
+std::string Item::getName() const {
+    return m_name;
 }
 
+std::string Item::getType() const {
+    return m_type;
+}
 
-int Item::getBonusPower() const{  //returns how much strength item adds to the hero
-return m_bonusPower;
+int Item::getBonusPower() const {
+    return m_bonusPower;
+}
+
+std::string Item::getDescription() const {
+    return "A generic item.";
 }

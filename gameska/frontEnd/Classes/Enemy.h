@@ -16,9 +16,10 @@ protected:
     int m_health;
 
 public:
-    Enemy(const string &m_name, const int m_strength, const bool m_isAlive, const int m_health)
-    : m_name(m_name), m_strength(m_strength), m_isAlive(m_isAlive), m_health(health) {
-    }// constructor
+
+    Enemy(string name, int strength, bool isAlive, int health)
+        : m_name(name), m_strength(strength), m_isAlive(isAlive), m_health(health) {
+    }
 
     virtual ~Enemy()=default;
 
