@@ -3,17 +3,55 @@
 //
 #include "MainMenuDesign.h"
 #include <iostream>
-#include <conio.h>   // _getch()
-#include <cstdlib>   // system("cls")
-#include <windows.h> // Barvy
+
+#ifdef _WIN32
+    #include <conio.h> // _getch()
+    #include <windows.h> // Barvy
+#else
+    #include <termios.h>
+    #include <unistd.h>
+    #include <sys/ioctl.h>
+#endif
+
+#ifndef _WIN32
+int _getch() {
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+#endif
 
 void setColor(int color) {
+#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    switch(color) {
+        case 4:  std::cout << "\033[31m"; break; // cervena
+        case 7:  std::cout << "\033[37m"; break; // bila
+        case 8:  std::cout << "\033[90m"; break; // seda
+        case 15: std::cout << "\033[97m"; break; // vic bila
+        default: std::cout << "\033[0m";  break; // Reset
+    }
+#endif
+}
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 // --- VYKRESLOVÁNÍ MENU ---
 void MainMenuDesign::draw(int selectedOption) {
-    system("cls");
+    clearScreen();
 
     setColor(4); // Červená
     std::cout << "\n\n";
@@ -45,7 +83,7 @@ void MainMenuDesign::draw(int selectedOption) {
 }
 
 void MainMenuDesign::showCreditsScreen() {
-    system("cls");
+    clearScreen();
     std::cout << "\n\n   === CREDITS ===\n\n";
     std::cout << "   Backend: Janota & Wolf\n";
     std::cout << "   Frontend: Manik & Nemcova\n\n";
@@ -54,7 +92,7 @@ void MainMenuDesign::showCreditsScreen() {
 }
 
 void MainMenuDesign::showStoryScreen() {
-    system("cls");
+    clearScreen();
     std::cout << "\n\n   === STORY ===\n\n";
     std::cout << "     In a world full of pain and suffering...\n";
     std::cout << "   Pozor na vlaky.\n\n";
@@ -71,26 +109,54 @@ bool MainMenuDesign::run() {
     bool running = true;
 
     while (running) {
-        draw(selection); // Nakresli menu
+        draw(selection);
+        int key = _getch();
+        bool keyHandled = false;
 
-        int key = _getch(); // Cekej na klavesu
-
-        // Ovládání
-        if (key == 'w' || key == 'W' || key == 72) {
-            if (selection > 0) selection--;
-        }
-        else if (key == 's' || key == 'S' || key == 80) {
-            if (selection < 3) selection++;
-        }
-        else if (key == 13) { // ENTER
-            // Tady se rozhoduje, co se stane
-            if (selection == 0) {
-                system("cls");
-                return true; // Spustit hru
+#ifdef _WIN32
+        // windows sipky
+        if (key == 224) {
+            key = _getch();
+            if (key == 72 && selection > 0) {
+                selection--;
+                keyHandled = true;
             }
-            if (selection == 1) showCreditsScreen();
-            if (selection == 2) showStoryScreen();
-            if (selection == 3) return false; // Ukončit program
+            else if (key == 80 && selection < 3) {
+                selection++;
+                keyHandled = true;
+            }
+        }
+#else
+        // unix sipky
+        if (key == 27) {
+            _getch();
+            key = _getch();
+            if (key == 65 && selection > 0) {
+                selection--;
+                keyHandled = true;
+            }
+            else if (key == 66 && selection < 3) {
+                selection++;
+                keyHandled = true;
+            }
+        }
+#endif
+        if (!keyHandled) {
+            if (key == 'w' || key == 'W') {
+                if (selection > 0) selection--;
+            }
+            else if (key == 's' || key == 'S') {
+                if (selection < 3) selection++;
+            }
+            else if (key == 13 || key == 10) {
+                if (selection == 0) {
+                    clearScreen();
+                    return true; // Spustit hru
+                }
+                if (selection == 1) showCreditsScreen();
+                if (selection == 2) showStoryScreen();
+                if (selection == 3) return false; // Ukončit program
+            }
         }
     }
     return false;

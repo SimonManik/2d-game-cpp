@@ -28,6 +28,7 @@ add_executable(gameska main.cpp
         backEnd/gameLogic/LevelLogic.cpp
         backEnd/gameLogic/LevelLogic.h
         backEnd/render/RenderEngine.cpp
-        frontEnd/Classes/Menu/MainMenuDesign.cpp)
+        frontEnd/Classes/Menu/MainMenuDesign.cpp
+        backEnd/types/Color.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
