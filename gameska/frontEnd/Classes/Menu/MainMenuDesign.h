@@ -6,15 +6,13 @@
 
 class MainMenuDesign {
 public:
-    // Hlavní smyčka celé aplikace
-    void run();
-
+    // Hlavní smyčka menu, vrací true pokud chce hrát, false pokud chce exit
+    bool run();
 private:
     // Vykreslení menu
     void draw(int selectedOption);
 
     // Nové funkce pro jednotlivé obrazovky (aby to nebylo v mainu)
-    void showPlayScreen();
     void showCreditsScreen();
     void showStoryScreen();
 };

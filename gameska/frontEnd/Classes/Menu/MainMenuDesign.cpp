@@ -44,15 +44,6 @@ void MainMenuDesign::draw(int selectedOption) {
     setColor(7);
 }
 
-
-
-void MainMenuDesign::showPlayScreen() {
-    system("cls");
-    std::cout << "\n\n   HRA BEZI... (Predstirej, ze zabijis monstra)\n\n";
-    std::cout << "   [Zmackni cokoliv pro navrat do menu]";
-    _getch();
-}
-
 void MainMenuDesign::showCreditsScreen() {
     system("cls");
     std::cout << "\n\n   === CREDITS ===\n\n";
@@ -75,7 +66,7 @@ void MainMenuDesign::showStoryScreen() {
 }
 
 // --- HLAVNÍ SMYČKA ---
-void MainMenuDesign::run() {
+bool MainMenuDesign::run() {
     int selection = 0;
     bool running = true;
 
@@ -93,10 +84,14 @@ void MainMenuDesign::run() {
         }
         else if (key == 13) { // ENTER
             // Tady se rozhoduje, co se stane
-            if (selection == 0) showPlayScreen();
+            if (selection == 0) {
+                system("cls");
+                return true; // Spustit hru
+            }
             if (selection == 1) showCreditsScreen();
             if (selection == 2) showStoryScreen();
-            if (selection == 3) running = false; // Ukončí smyčku -> konec programu
+            if (selection == 3) return false; // Ukončit program
         }
     }
+    return false;
 }

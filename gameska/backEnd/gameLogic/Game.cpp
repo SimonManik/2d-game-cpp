@@ -12,6 +12,7 @@
 
 Game::Game(int screenW, int screenH)
     : m_renderEngine(screenW, screenH)
+    , m_inputHandler()
     , m_player(Vec2(0, 0))
     , m_levelLogic(nullptr)
     , m_running(false) {
