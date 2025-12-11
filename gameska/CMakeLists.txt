@@ -13,8 +13,8 @@ add_executable(gameska main.cpp
         frontEnd/Classes/map.cpp
         frontEnd/Classes/MapBlock.cpp
         frontEnd/Classes/MapBlock.h
-        backEnd/gameLogic/camera.cpp
-        backEnd/gameLogic/camera.h
+        backEnd/render/Camera.cpp
+        backEnd/render/Camera.h
         backEnd/gameLogic/inputHandler.cpp
         backEnd/gameLogic/inputHandler.h
         backEnd/types/Command.h
@@ -24,6 +24,9 @@ add_executable(gameska main.cpp
         frontEnd/Classes/Player.h
         backEnd/types/Vec2.h
         backEnd/render/TerminalUtils.cpp
-        backEnd/render/TerminalUtils.h)
+        backEnd/render/TerminalUtils.h
+        backEnd/gameLogic/LevelLogic.cpp
+        backEnd/gameLogic/LevelLogic.h
+        backEnd/render/RenderEngine.cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
