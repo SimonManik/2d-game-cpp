@@ -17,7 +17,7 @@ public:
     ~RenderEngine();
 
     // main render metoda
-    void render(const Player& player, const Camera& camera);
+    void render(const Player& player, const Camera& camera, const Map* map = nullptr);
 
     // render UI
     // void renderStaticUI();
@@ -28,7 +28,7 @@ public:
     const Camera& getCamera() const { return m_camera; }
 
 private:
-    void renderWorld(const Player& player, const Camera& camera);
+    void renderWorld(const Camera& camera, const Map* map);
     void renderPlayer(const Player& player, const Camera& camera);
 
     ConsoleBuffer m_buffer;

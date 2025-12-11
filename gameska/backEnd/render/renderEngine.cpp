@@ -12,13 +12,15 @@ RenderEngine::RenderEngine(int screenW, int screenH)
 RenderEngine::~RenderEngine() {
 }
 
-void RenderEngine::render(const Player& player, const Camera& camera) {
+void RenderEngine::render(const Player& player, const Camera& camera, const Map* map) {
     m_buffer.clear();
 
-    // render game world
-    renderWorld(player, camera);
+    // Render game world
+    if (map != nullptr) {
+        renderWorld(camera, map);
+    }
 
-    // render player
+    // Render player
     renderPlayer(player, camera);
 
     // UIs
@@ -28,8 +30,37 @@ void RenderEngine::render(const Player& player, const Camera& camera) {
     m_buffer.display();
 }
 
-void RenderEngine::renderWorld(const Player& player, const Camera& camera) {
-    // TODO: implementace -> MapLogic -> Map a jednotlive bloky
+void RenderEngine::renderWorld(const Camera& camera, const Map* map) {
+    Vec2 cameraPos = camera.getPosition();
+    int halfW = camera.getViewportW() / 2;
+    int halfH = camera.getViewportH() / 2;
+
+    int startX = cameraPos.x - halfW;
+    int endX = cameraPos.x + halfW;
+    int startY = cameraPos.y - halfH;
+    int endY = cameraPos.y + halfH;
+
+    // tiles
+    for (int worldY = startY; worldY <= endY; worldY++) {
+        for (int worldX = startX; worldX <= endX; worldX++) {
+            Vec2 worldPos(worldX, worldY);
+
+            if (!map->isInBounds(worldPos)) {
+                continue;
+            }
+
+            Vec2 screenPos = camera.worldToScreen(worldPos);
+
+            if (screenPos.x >= 0 && screenPos.x < camera.getViewportW() &&
+                screenPos.y >= 0 && screenPos.y < camera.getViewportH()) {
+
+                char displayChar = map->getDisplayChar(worldPos);
+                m_buffer.setChar(screenPos.x, screenPos.y, displayChar);
+                }
+        }
+    }
+
+    // TODO: enemies
 }
 
 void RenderEngine::renderPlayer(const Player& player, const Camera& camera) {
