@@ -4,6 +4,7 @@
 
 #include "ConsoleBuffer.h"
 #include <iostream>
+#include <string>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -15,15 +16,13 @@ ConsoleBuffer::ConsoleBuffer(int width, int height)
     : m_width(width), m_height(height) {
     buffer.resize(height,  std::vector<ColoredChar>(width, ColoredChar()));
 #ifdef _WIN32
+    system("cls");
 #else
      system("clear");
 #endif
 }
 
-ConsoleBuffer::~ConsoleBuffer() {
-    #ifdef _WIN32
-    #endif
-}
+ConsoleBuffer::~ConsoleBuffer() = default;
 
 void ConsoleBuffer::clear() {
     for (int y = 0; y < m_height; y++) {
@@ -37,7 +36,7 @@ void ConsoleBuffer::setChar(int x, int y, char c, std::string color) {
     if (x < 0 || x >= m_width || y < 0 || y >= m_height) {
         return;
     }
-    buffer[y][x] = ColoredChar(c, color);
+    buffer[y][x] = ColoredChar(c, std::move(color));
 }
 
 void ConsoleBuffer::display() {
@@ -48,7 +47,7 @@ void ConsoleBuffer::display() {
     for (int y=0; y < m_height; y++)
     {
         for (int x=0; x < m_width; x++){
-             putchar(buffer[y][x]);
+             putchar(buffer[y][x].character);
         }
         if (y < m_height - 1)
         {
