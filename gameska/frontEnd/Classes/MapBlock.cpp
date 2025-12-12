@@ -6,12 +6,10 @@
 
 
 // Konstruktor
-MapBlock::MapBlock(int startX, int startY, int startZ, char symbol, bool startPassable)
-    // Volame konstruktor rodice a nastavujeme mu typ Wall (obecne blok)
-    : MainInheriteClass(startX, startY, startZ, ObjectType::Wall, symbol),
-      isPassable(startPassable),
-      p_item(nullptr) //na zazacku je slot prazdny, nikam neukazuje
-{
+MapBlock::MapBlock(Vec2 pos, char symbol, Color color, bool startPassable)
+    : MainInheriteClass(pos, symbol, color, ObjectType::Wall)
+    , isPassable(startPassable)
+    , p_item(nullptr) {
 }
 
 //destruktor

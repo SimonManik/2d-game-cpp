@@ -1,5 +1,3 @@
-using namespace std;
-
 #ifndef MAININHERITECLASS_H
 #define MAININHERITECLASS_H
 
@@ -52,7 +50,7 @@ public:
     Vec2 getPosition() const { return m_position; }
     char getDisplayChar() const { return m_displayChar; }
     Color getColor() const { return m_color; }
-    string getColorAnsi() const { return ColorUtils::toAnsiCode(m_color); }
+    std::string getColorAnsi() const { return ColorUtils::toAnsiCode(m_color); }
     ObjectType getType() const { return m_type; }
 
     //  setter

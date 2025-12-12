@@ -27,7 +27,7 @@ add_executable(gameska main.cpp
         backEnd/render/TerminalUtils.h
         backEnd/gameLogic/LevelLogic.cpp
         backEnd/gameLogic/LevelLogic.h
-        backEnd/render/RenderEngine.cpp
+        backEnd/render/renderEngine.cpp
         frontEnd/Classes/Menu/MainMenuDesign.cpp
         backEnd/types/Color.h)
 

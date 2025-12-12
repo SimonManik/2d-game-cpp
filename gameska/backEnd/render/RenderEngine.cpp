@@ -2,7 +2,8 @@
 // Created by Metoděj Janota on 10.11.2025.
 //
 
-#include "renderEngine.h"
+#include "RenderEngine.h"
+#include "../types/Color.h"
 
 RenderEngine::RenderEngine(int screenW, int screenH)
     : m_buffer(screenW, screenH)
@@ -55,7 +56,20 @@ void RenderEngine::renderWorld(const Camera& camera, const Map* map) {
                 screenPos.y >= 0 && screenPos.y < camera.getViewportH()) {
 
                 char displayChar = map->getDisplayChar(worldPos);
-                m_buffer.setChar(screenPos.x, screenPos.y, displayChar);
+
+                std::string color = "";
+                if (displayChar == '#') {
+                    color = ColorUtils::toAnsiCode(Color::WHITE);
+                } else if (displayChar == '.') {
+                    color = ColorUtils::toAnsiCode(Color::BLACK);  // nebo CYAN pro podlahu
+                } else if (displayChar == 'S') {
+                    color = ColorUtils::toAnsiCode(Color::GREEN);
+                } else if (displayChar == 'T') {
+                    color = ColorUtils::toAnsiCode(Color::YELLOW);
+                }
+
+                m_buffer.setChar(screenPos.x, screenPos.y, displayChar, color);
+
                 }
         }
     }
@@ -66,7 +80,9 @@ void RenderEngine::renderWorld(const Camera& camera, const Map* map) {
 void RenderEngine::renderPlayer(const Player& player, const Camera& camera) {
     Vec2 playerScreen = camera.worldToScreen(player.getPosition());
     if (camera.isVisible(player.getPosition())) {
-        m_buffer.setChar(playerScreen.x, playerScreen.y, player.getDisplayChar());
+        m_buffer.setChar(playerScreen.x, playerScreen.y,
+                        player.getDisplayChar(),
+                        player.getColorAnsi());
     }
 }
 

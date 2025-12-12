@@ -8,20 +8,18 @@
 
 #include "../../backEnd/types/Vec2.h"
 #include "../../backEnd/types/Command.h"
+#include "mainInheriteClass.h"
+#include "../../backEnd/types/Color.h"
 
-class Player {
+class Player : public MainInheriteClass {
 public:
-    Player(Vec2 startPos);
+    Player(Vec2 startPos)
+    : MainInheriteClass(startPos, '@', Color::GREEN, ObjectType::Player) {
+    }
 
     void handleCommand(Command cmd);
-
-    Vec2 getPosition() const { return m_position; }
-    void setPosition(Vec2 pos) { m_position = pos; }
-
+    void update() override {}
     char getDisplayChar() const { return '@'; }
-
-private:
-    Vec2 m_position;
 };
 
 #endif //GAMESKA_PLAYER_H

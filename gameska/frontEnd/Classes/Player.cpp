@@ -4,9 +4,6 @@
 
 #include "Player.h"
 
-Player::Player(Vec2 startPos)
-    : m_position(startPos){}
-
 void Player::handleCommand(Command cmd) {
     switch (cmd) {
         case Command::MOVE_UP:

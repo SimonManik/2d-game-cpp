@@ -2,8 +2,6 @@
 // Created by Metoděj Janota on 11.11.2025.
 //
 
-using namespace std;
-
 #include "ConsoleBuffer.h"
 #include <iostream>
 
@@ -15,7 +13,7 @@ using namespace std;
 
 ConsoleBuffer::ConsoleBuffer(int width, int height)
     : m_width(width), m_height(height) {
-    buffer.resize(height,  vector<ColoredChar>(width, ColoredChar()));
+    buffer.resize(height,  std::vector<ColoredChar>(width, ColoredChar()));
 #ifdef _WIN32
 #else
      system("clear");
@@ -30,12 +28,12 @@ ConsoleBuffer::~ConsoleBuffer() {
 void ConsoleBuffer::clear() {
     for (int y = 0; y < m_height; y++) {
         for (int x = 0; x < m_width; x++) {
-            buffer[y][x] = ' ';
+            buffer[y][x] = ColoredChar(' ', "");
         }
     }
 }
 
-void ConsoleBuffer::setChar(int x, int y, char c, string color) {
+void ConsoleBuffer::setChar(int x, int y, char c, std::string color) {
     if (x < 0 || x >= m_width || y < 0 || y >= m_height) {
         return;
     }

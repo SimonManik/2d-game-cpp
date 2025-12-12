@@ -2,6 +2,7 @@
 #define MAPBLOCK_H
 
 #include "mainInheriteClass.h" // Musi znat rodice
+#include "../../backEnd/types/Vec2.h"
 
 class Item; //na pozděj
 
@@ -14,7 +15,7 @@ private:
 
 public:
     // Konstruktor
-    MapBlock(int startX, int startY, int startZ, char symbol, bool startPassable);
+    MapBlock(Vec2 pos, char symbol, Color color, bool startPassable);
 
     // Destruktor
     ~MapBlock() override;
