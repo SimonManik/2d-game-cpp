@@ -4,9 +4,17 @@
 
 #ifndef GAMESKA_POTION_H
 #define GAMESKA_POTION_H
+#include "Item.h"
 
+class HealingPotion : public Item {
+private: int m_healingAmount;
 
-class HealingPotion {
+public: HealingPotion(const std::string& name, int healingAmount);
+
+int getHealingAmount()const;
+
+std::string getDescription() const override;
+
 };
 
 

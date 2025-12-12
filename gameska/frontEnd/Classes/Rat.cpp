@@ -9,4 +9,5 @@ void Rat::attack() const {
 
     std::cout << "The rat attacks with tail for  " << m_strength << " damage!" << std::endl;
 
+
 }

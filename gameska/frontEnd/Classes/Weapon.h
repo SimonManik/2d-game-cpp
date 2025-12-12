@@ -11,12 +11,10 @@
 // Weapon inherits from Item
 class Weapon : public Item {
 public:
-    /
+    // Just a semicolon here!
+    Weapon(const std::string& name, int bonusPower);
 
-    Weapon(const std::string& name, int bonusPower);  // Parametric Constructor
-
-
-    std::string getDescription() const override;  // Override the description function
+    std::string getDescription() const override;
 };
 
 #endif //GAMESKA_WEAPON_H

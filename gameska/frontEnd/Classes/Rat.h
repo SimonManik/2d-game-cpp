@@ -14,6 +14,8 @@ public:
     Rat() : Enemy("Rat", 10, true, 25) {
     }
 
+    Rat(const int m_strength, const int m_health):Enemy ("Rat", m_strength, true, m_health) {}
+
     ~Rat() override {}
 
 
