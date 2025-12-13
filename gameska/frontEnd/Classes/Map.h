@@ -14,6 +14,7 @@ public:
     // metody pro tiles
     bool isWalkable(Vec2 pos) const;
     bool isInBounds(Vec2 pos) const;
+    bool isExitTile(Vec2 pos) const;
     char getDisplayChar(Vec2 pos) const;
     void setTile(Vec2 pos, char c);
 
