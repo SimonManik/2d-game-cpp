@@ -8,7 +8,7 @@
 // Konstruktor
 MapBlock::MapBlock(Vec2 pos, char symbol, Color color, bool startPassable)
     : MainInheriteClass(pos, symbol, color, ObjectType::Wall)
-    , isPassable(startPassable)
+    , isPassable(symbol == 'O' ? true : startPassable)
     , p_item(nullptr) {
 }
 

@@ -62,20 +62,46 @@ void Game::run() {
 
 void Game::update(Command cmd) {
     Vec2 oldPos = m_player.getPosition();
-    m_player.handleCommand(cmd);
-    Vec2 newPos = m_player.getPosition();
+
+    // vypocet nove pozice bez fyzickeho pohybu
+    Vec2 newPos = oldPos;
+    switch (cmd) {
+        case Command::MOVE_UP:
+            newPos.y++;
+            break;
+        case Command::MOVE_DOWN:
+            newPos.y--;
+            break;
+        case Command::MOVE_LEFT:
+            newPos.x--;
+            break;
+        case Command::MOVE_RIGHT:
+            newPos.x++;
+            break;
+        default:
+            return;
+    }
 
     Map* currentMap = m_levelLogic->getCurrentMap();
     if (currentMap != nullptr) {
+        // kontrola, zda je cilova pozice platna
         if (!currentMap->isWalkable(newPos)) {
-            m_player.setPosition(oldPos);
             return;
         }
 
-        // TODO: kontrola kolize s enemies
-        // TODO: kontrola kolize s items
-        // TODO: kontrola vstupu do trapdoor
+        // kontrola trapdooru pred pohybem
+        if (currentMap->getDisplayChar(newPos) == 'O') {
+            m_levelLogic->nextLevel();
+            currentMap = m_levelLogic->getCurrentMap();
+            if (currentMap != nullptr) {
+                m_player.setPosition(currentMap->getSpawnPoint());
+                m_renderEngine.getCamera().setPosition(m_player.getPosition());
+            }
+            return;
+        }
     }
 
+    // pokud vse proslo, teprve se hrac pohne
+    m_player.setPosition(newPos);
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
 }
