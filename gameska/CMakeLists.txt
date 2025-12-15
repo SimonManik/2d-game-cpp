@@ -7,19 +7,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(gameska
         main.cpp
 
-        backEnd/render/renderEngine.h
-        backEnd/render/renderEngine.cpp
-        backEnd/render/consoleBuffer.h
-        backEnd/render/consoleBuffer.cpp
+        backEnd/render/RenderEngine.h
+        backEnd/render/RenderEngine.cpp
+        backEnd/render/ConsoleBuffer.h
+        backEnd/render/ConsoleBuffer.cpp
         backEnd/render/Camera.h
         backEnd/render/Camera.cpp
         backEnd/render/TerminalUtils.h
         backEnd/render/TerminalUtils.cpp
 
-        backEnd/gameLogic/inputHandler.h
-        backEnd/gameLogic/inputHandler.cpp
-        backEnd/gameLogic/game.h
-        backEnd/gameLogic/game.cpp
+        backEnd/gameLogic/InputHandler.h
+        backEnd/gameLogic/InputHandler.cpp
+        backEnd/gameLogic/Game.h
+        backEnd/gameLogic/Game.cpp
         backEnd/gameLogic/LevelLogic.h
         backEnd/gameLogic/LevelLogic.cpp
 
@@ -27,19 +27,24 @@ add_executable(gameska
         backEnd/types/Vec2.h
         backEnd/types/Color.h
 
-        frontEnd/Classes/mainInheriteClass.cpp
-        frontEnd/Classes/map.h
-        frontEnd/Classes/map.cpp
+        frontEnd/Classes/MainInheriteClass.h
+        frontEnd/Classes/MainInheriteClass.cpp
+        frontEnd/Classes/Enemy.h
+        frontEnd/Classes/Enemy.cpp
+        frontEnd/Classes/Map.h
+        frontEnd/Classes/Map.cpp
         frontEnd/Classes/MapBlock.h
         frontEnd/Classes/MapBlock.cpp
         frontEnd/Classes/Player.h
         backEnd/types/Vec2.h
+        frontEnd/Classes/Item.h
+        frontEnd/Classes/Item.cpp
         frontEnd/Classes/Weapon.cpp
         frontEnd/Classes/Weapon.h
         frontEnd/Classes/HealingPotion.cpp
         frontEnd/Classes/HealingPotion.h
         frontEnd/Classes/Key.cpp
-        frontEnd/Classes/Key.h)
+        frontEnd/Classes/Key.h
         frontEnd/Classes/Player.cpp
 
         frontEnd/Classes/Menu/MainMenuDesign.h
@@ -52,6 +57,12 @@ add_executable(gameska
         frontEnd/Classes/Menu/StoryScreen.cpp
 
         frontEnd/Classes/Menu/MenuCommands.h
+        frontEnd/Classes/Weapon.h
+        frontEnd/Classes/Spider.h
+        frontEnd/Classes/Skeleton.h
+        frontEnd/Classes/Skeleton.cpp
+        frontEnd/Classes/Spider.cpp
+        frontEnd/Classes/Rat.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
