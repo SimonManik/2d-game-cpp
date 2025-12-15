@@ -29,7 +29,14 @@ bool Map::isWalkable(Vec2 pos) const {
     }
 
     char tile = m_tiles[pos.y][pos.x];
-    return tile == ' ' || tile == 'S' || tile == 'T';
+    return tile == ' ' || tile == 'S' || tile == 'T' || tile == 'O';
+}
+
+bool Map::isExitTile(Vec2 pos) const {
+    if (!isInBounds(pos)) {
+        return false;
+    }
+    return m_tiles[pos.y][pos.x] == 'O';
 }
 
 char Map::getDisplayChar(Vec2 pos) const {
