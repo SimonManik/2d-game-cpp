@@ -7,6 +7,8 @@
 
 #include "../types/Command.h"
 #ifdef _WIN32
+#include <windows.h>
+#include <conio.h> // pro _kbhit() a _getch()
 #else
 #include <termios.h>
 #include <unistd.h>
@@ -21,9 +23,9 @@ public:
     InputHandler();
     ~InputHandler();
     Command getInput();
+    bool kbhit();
 
 private:
-    bool kbhit();
     char getch();
 };
 

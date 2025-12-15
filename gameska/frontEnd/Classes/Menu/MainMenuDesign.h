@@ -1,22 +1,43 @@
 //
 // Created by manik on 11.12.2025.
 //
-#ifndef MAINMENU_MAINMENUDESIGN_H
-#define MAINMENU_MAINMENUDESIGN_H
+#ifndef GAMESKA_MAINMENUDESIGN_H
+#define GAMESKA_MAINMENUDESIGN_H
+
+#include <vector>
+#include <string>
+#include <map>
+
+#include "CreditsScreen.h"
+#include "StoryScreen.h"
+#include "MenuCommands.h"
 
 class MainMenuDesign {
 public:
-    // Hlavní smyčka celé aplikace
-    void run();
+    MainMenuDesign();
+    ~MainMenuDesign();
+
+    bool run();
 
 private:
-    // Vykreslení menu
-    void draw(int selectedOption);
+    std::vector<std::string> options;
+    int currentSelection;
 
-    // Nové funkce pro jednotlivé obrazovky (aby to nebylo v mainu)
-    void showPlayScreen();
-    void showCreditsScreen();
-    void showStoryScreen();
+    bool running;
+    bool startGame;
+
+    std::map<int, MenuCommand*> commands;
+
+    CreditsScreen creditsScreen;
+    StoryScreen storyScreen;
+
+    void draw();
+
+    // Zde už není setupWindow()
+
+    void setColor(int color);
+    void clearScreen();
+    void printCentered(const std::string& text);
 };
 
-#endif //MAINMENU_MAINMENUDESIGN_H
+#endif //GAMESKA_MAINMENUDESIGN_H

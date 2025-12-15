@@ -6,10 +6,15 @@
 #define GAMESKA_CONSOLEBUFFER_H
 
 #include <vector>
+#include <string>
 
-#ifdef _WIN32
-    #include <windows.h>
-#endif
+struct ColoredChar {
+    char character;
+    std::string color;
+
+    ColoredChar() : character(' '), color() {}
+    ColoredChar(char c, std::string col = "") : character(c), color(std::move(col)) {}
+};
 
 class ConsoleBuffer {
     public:
@@ -17,7 +22,7 @@ class ConsoleBuffer {
         ~ConsoleBuffer();
 
         void clear();
-        void setChar(int x, int y, char c);
+        void setChar(int x, int y, char c, std::string color = "");
         void display();
 
         int getWidth() const { return m_width; }
@@ -26,10 +31,7 @@ class ConsoleBuffer {
     private:
         int m_width;
         int m_height;
-        std::vector<std::vector<char>> buffer;
-
-    #ifdef _WIN32
-    #endif
+        std::vector<std::vector<ColoredChar>> buffer;
 };
 
 #endif //GAMESKA_CONSOLEBUFFER_H

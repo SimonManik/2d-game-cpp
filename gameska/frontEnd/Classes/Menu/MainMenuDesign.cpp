@@ -3,100 +3,197 @@
 //
 #include "MainMenuDesign.h"
 #include <iostream>
-#include <conio.h>   // _getch()
-#include <cstdlib>   // system("cls")
-#include <windows.h> // Barvy
+#include <string>
+#include <vector>
 
-void setColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+// podminene includovani knihoven
+#ifdef _WIN32
+    // Kód pro Windows
+    #include <conio.h>
+    #include <windows.h>
+#else
+    // kod pro Mac
+    #include <termios.h>
+    #include <unistd.h>
+    #include <cstdlib> // Pro system("clear")
+#endif
+
+// Definice barev
+const int COLOR_RED = 4;
+const int COLOR_GRAY = 8;
+const int COLOR_WHITE = 7;
+const int COLOR_BRIGHT_WHITE = 15;
+
+// pomocna funkce pro mac (Simulace _getch) =
+#ifndef _WIN32
+int _getch() {
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+#endif
+
+MainMenuDesign::MainMenuDesign() {
+    currentSelection = 0;
+    running = true;
+    startGame = false;
+
+    options = {"Play Game", "Credits", "Story", "Exit"};
+
+    //inicializace prikazu
+    commands[0] = new PlayCommand(startGame, running);
+    commands[1] = new CreditsCommand(creditsScreen);
+    commands[2] = new StoryCommand(storyScreen);
+    commands[3] = new ExitCommand(running);
 }
 
-// --- VYKRESLOVÁNÍ MENU ---
-void MainMenuDesign::draw(int selectedOption) {
-    system("cls");
-
-    setColor(4); // Červená
-    std::cout << "\n\n";
-    std::cout << "        +--------------------------------------------------+\n";
-    std::cout << "        |                PAIN  &  SUFFERING                |\n";
-    std::cout << "        +--------------------------------------------------+\n";
-    std::cout << "\n";
-
-    // Play
-    if (selectedOption == 0) { setColor(15); std::cout << "                  >>   PLAY GAME   <<\n"; }
-    else                     { setColor(7);  std::cout << "                       Play Game\n"; }
-
-    // Credits
-    if (selectedOption == 1) { setColor(15); std::cout << "                  >>    CREDITS    <<\n"; }
-    else                     { setColor(7);  std::cout << "                        Credits\n"; }
-
-    // Story
-    if (selectedOption == 2) { setColor(15); std::cout << "                  >>     STORY     <<\n"; }
-    else                     { setColor(7);  std::cout << "                         Story\n"; }
-
-    // Exit
-    if (selectedOption == 3) { setColor(15); std::cout << "                  >>     EXIT      <<\n"; }
-    else                     { setColor(7);  std::cout << "                         Exit\n"; }
-
-    std::cout << "\n";
-    setColor(8);
-    std::cout << "        Use W/S to move, ENTER to select\n";
-    setColor(7);
+MainMenuDesign::~MainMenuDesign() {
+    for (auto& pair : commands) {
+        delete pair.second;
+    }
+    commands.clear();
 }
 
-
-
-void MainMenuDesign::showPlayScreen() {
-    system("cls");
-    std::cout << "\n\n   HRA BEZI... (Predstirej, ze zabijis monstra)\n\n";
-    std::cout << "   [Zmackni cokoliv pro navrat do menu]";
-    _getch();
-}
-
-void MainMenuDesign::showCreditsScreen() {
-    system("cls");
-    std::cout << "\n\n   === CREDITS ===\n\n";
-    std::cout << "   Backend: Janota & Wolf\n";
-    std::cout << "   Frontend: Manik & Nemcova\n\n";
-    std::cout << "   [Zmackni cokoliv pro navrat]";
-    _getch();
-}
-
-void MainMenuDesign::showStoryScreen() {
-    system("cls");
-    std::cout << "\n\n   === STORY ===\n\n";
-    std::cout << "     In a world full of pain and suffering...\n";
-    std::cout << "   Pozor na vlaky.\n\n";
-    std::cout << "   And don't forget, there's light at";
-    std::cout << "   the end of the tunnel, but be careful  ";
-    std::cout << "    it's not an oncoming train... ";
-    std::cout << "   It all depends on YOU... ";
-    _getch();
-}
-
-// --- HLAVNÍ SMYČKA ---
-void MainMenuDesign::run() {
-    int selection = 0;
-    bool running = true;
+bool MainMenuDesign::run() {
+    running = true;
+    startGame = false;
 
     while (running) {
-        draw(selection); // Nakresli menu
+        draw();
 
-        int key = _getch(); // Cekej na klavesu
+        int key = _getch();
+        if (key == 224) key = _getch(); // Ošetření šipek na Windows
 
-        // Ovládání
-        if (key == 'w' || key == 'W' || key == 72) {
-            if (selection > 0) selection--;
+        // ovladani
+        if (key == 'w' || key == 'W' || key == 72) { // Nahoru
+            if (currentSelection > 0) {
+                currentSelection--;
+                // ZVUK JEN NA WINDOWS
+                #ifdef _WIN32
+                Beep(600, 50);
+                #endif
+            }
         }
-        else if (key == 's' || key == 'S' || key == 80) {
-            if (selection < 3) selection++;
+        else if (key == 's' || key == 'S' || key == 80) { // Dolu
+            if (currentSelection < options.size() - 1) {
+                currentSelection++;
+                // ZVUK JEN NA WINDOWS
+                #ifdef _WIN32
+                Beep(600, 50);
+                #endif
+            }
         }
-        else if (key == 13) { // ENTER
-            // Tady se rozhoduje, co se stane
-            if (selection == 0) showPlayScreen();
-            if (selection == 1) showCreditsScreen();
-            if (selection == 2) showStoryScreen();
-            if (selection == 3) running = false; // Ukončí smyčku -> konec programu
+        else if (key == 13 || key == 10) { // ENTER (13 Win, 10 Mac)
+            // ZVUK JEN NA WINDOWS
+            #ifdef _WIN32
+            Beep(800, 80);
+            Beep(1000, 80);
+            #endif
+
+            if (commands.find(currentSelection) != commands.end()) {
+                commands[currentSelection]->execute();
+            }
         }
     }
+
+    return startGame;
+}
+
+// GRAFIKA A VZHLED
+
+void MainMenuDesign::draw() {
+    clearScreen();
+
+    setColor(COLOR_RED);
+    std::cout << "\n\n";
+    printCentered("+----------------------------------------------------------------+");
+    printCentered("|                                                                |");
+
+    printCentered("|                       ____   _   ___ _   _                     |");
+    printCentered("|                      |  _ \\ / \\ |_ _| \\ | |                    |");
+    printCentered("|                      | |_) / _ \\ | ||  \\| |                    |");
+    printCentered("|                      |  __/ ___ \\| || |\\  |                    |");
+    printCentered("|                      |_| /_/   \\_|_||_| \\_|                    |");
+    printCentered("|                                                                |");
+
+    printCentered("|                                &                               |");
+    printCentered("|                                                                |");
+
+    printCentered("|   ____  _   _  _____  _____  _____  ____   ___  _   _   ____   |");
+    printCentered("|  / ___|| | | ||  ___||  ___|| ____||  _ \\ |_ _|| \\ | | / ___|  |");
+    printCentered("|  \\___ \\| | | || |_   | |_   |  _|  | |_) | | | |  \\| || |  _   |");
+    printCentered("|   ___) | |_| ||  _|  |  _|  | |___ |  _ <  | | | |\\  || |_| |  |");
+    printCentered("|  |____/ \\___/ |_|    |_|    |_____||_| \\_\\|___||_| \\_| \\____|  |");
+    printCentered("|                                                                |");
+
+    setColor(COLOR_GRAY);
+    printCentered("|                          [ RPG GAME ]                          |");
+
+    setColor(COLOR_RED);
+    printCentered("|                                                                |");
+    printCentered("+----------------------------------------------------------------+");
+
+    // --- stred ---
+    printCentered("|                                          |");
+    printCentered("+------------------------------------------+");
+
+    for (size_t i = 0; i < options.size(); ++i) {
+        std::string text;
+        if (i == currentSelection) {
+            setColor(COLOR_BRIGHT_WHITE);
+            text = ">>  " + options[i] + "  <<";
+        } else {
+            setColor(COLOR_GRAY);
+            text = options[i];
+        }
+        printCentered(text);
+    }
+
+    setColor(COLOR_RED);
+    printCentered("+------------------------------------------+");
+
+    // --- SPODEK ---
+    std::cout << "\n";
+    setColor(COLOR_GRAY);
+    printCentered("[W/S] = move  |  [ENTER] = select");
+
+    setColor(COLOR_WHITE);
+}
+
+// === pomocne FUNKCE (Cross-Platform) ===
+
+void MainMenuDesign::clearScreen() {
+#ifdef _WIN32
+    system("cls"); // Windows
+#else
+    system("clear"); // Mac/Linux
+#endif
+}
+
+void MainMenuDesign::setColor(int color) {
+#ifdef _WIN32
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    // Mac verze (překlad na ANSI kódy)
+    switch(color) {
+        case 4: std::cout << "\033[31m"; break;  // cervena
+        case 7: std::cout << "\033[0m";  break;  // Reset/bila
+        case 8: std::cout << "\033[90m"; break;  // seda (Bright Black)
+        case 15: std::cout << "\033[97m"; break; // jasne  bila
+        default: std::cout << "\033[0m"; break;
+    }
+#endif
+}
+
+void MainMenuDesign::printCentered(const std::string& text) {
+    int width = 80; // standartni sirka konzole
+    int padding = (width - text.length()) / 2;
+    if (padding > 0) std::cout << std::string(padding, ' ');
+    std::cout << text << std::endl;
 }

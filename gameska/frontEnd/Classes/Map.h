@@ -2,34 +2,47 @@
 #define MAP_H
 
 #include <vector>
-#include "MapBlock.h"
+#include "../../backEnd/types/Vec2.h"
+
+class Enemy;
 
 class Map {
-private:
-    // 2D mrizka (vektor vektoru), ktera drzi ukazatele na jednotlive bloky mapy
-    // ukazatel (*), protoze MapBlock je dcerina trida a chceme vyuzivat polymorfismus
-    std::vector<std::vector<MapBlock*>> gameMap;
-
-    int width;  // Sirka mapy (pocet sloupcu)
-    int height; // Vyska mapy (pocet radku)
-
 public:
-    // Konstruktor Nastavi rozmery mapy
-    Map(int w, int h);
-
-    // Destruktor smazani pointeru
+    Map(int width, int height);
     ~Map();
 
-    // Metoda pro vygenerovani testovaci urovne (zdi dokola, podlaha uvnitr)
-    void generateTestMap();
+    // metody pro tiles
+    bool isWalkable(Vec2 pos) const;
+    bool isInBounds(Vec2 pos) const;
+    char getDisplayChar(Vec2 pos) const;
+    void setTile(Vec2 pos, char c);
 
-    // Metoda pro ziskani konkretniho bloku na souradnicich X Y
-    // Vraci pointer na blok
-    MapBlock* getBlockAt(int x, int y);
+    // spawn point
+    Vec2 getSpawnPoint() const { return m_spawnPoint; }
+    void setSpawnPoint(Vec2 pos) { m_spawnPoint = pos; }
 
-    // Gettery pro rozmery mapy
-    int getWidth() const { return width; }
-    int getHeight() const { return height; }
+    // ytrapDoor
+    Vec2 getExitPoint() const { return m_exitPoint; }
+    void setExitPoint(Vec2 pos) { m_exitPoint = pos; }
+    bool hasExit() const { return m_hasExit; }
+
+    // enemies
+    void addEnemy(Enemy* e);
+    std::vector<Enemy*>& getEnemies() { return m_enemies; }
+    const std::vector<Enemy*>& getEnemies() const { return m_enemies; }
+
+    // gettery
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
+
+private:
+    int m_width;
+    int m_height;
+    std::vector<std::vector<char>> m_tiles;
+    Vec2 m_spawnPoint;
+    Vec2 m_exitPoint;
+    bool m_hasExit;
+    std::vector<Enemy*> m_enemies;
 };
 
 #endif //MAP_H

@@ -4,69 +4,78 @@
 
 #include "Game.h"
 #include <chrono>
+#include <cstdio>
+#include <iostream>
 #include <thread>
 #include "./../types/Vec2.h"
-
+#include "../render/RenderEngine.h"
 
 Game::Game(int screenW, int screenH)
-    : m_buffer(screenW, screenH)
-    , m_camera(screenW, screenH)
+    : m_renderEngine(screenW, screenH)
+    , m_inputHandler()
     , m_player(Vec2(0, 0))
+    , m_levelLogic(nullptr)
     , m_running(false) {
+    m_levelLogic = new LevelLogic();
+}
+
+Game::~Game() {
+    delete m_levelLogic;
 }
 
 void Game::run() {
     m_running = true;
-    m_camera.setPosition(m_player.getPosition());
-    render();
+
+    // inicializace
+    m_levelLogic->nextLevel();
+    Map* currentMap = m_levelLogic->getCurrentMap();
+    if (currentMap != nullptr) {
+        m_player.setPosition(currentMap->getSpawnPoint());
+    }
+    m_renderEngine.getCamera().setPosition(m_player.getPosition());
+    m_renderEngine.render(m_player, m_renderEngine.getCamera());
 
     while (m_running) {
-        Command cmd = m_inputHandler.getInput();
 
-        if (cmd == Command::NONE) {
+        if (!m_inputHandler.kbhit()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
 
+        Command cmd = m_inputHandler.getInput();
+
+        if (cmd == Command::NONE) continue;
         if (cmd == Command::QUIT) {
             m_running = false;
             continue;
         }
 
-        m_player.handleCommand(cmd);
-        m_camera.setPosition(m_player.getPosition());
-        render();
+        update(cmd);
+
+        // render
+        m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentMap());
     }
+
+    std::cout << "x: " << m_player.getPosition().x << ", y:" << m_player.getPosition().y << std::endl;
+    std::cout << m_levelLogic->getCurrentLevel() << std::endl;
 }
 
-void Game::render() {
-    m_buffer.clear();
+void Game::update(Command cmd) {
+    Vec2 oldPos = m_player.getPosition();
+    m_player.handleCommand(cmd);
+    Vec2 newPos = m_player.getPosition();
 
-    // grid
-    for (int worldY = -50; worldY < 50; worldY += 5) {
-        for (int worldX = -50; worldX < 50; worldX += 5) {
-            Vec2 worldPos(worldX, worldY);
-
-            if (m_camera.isVisible(worldPos)) {
-                Vec2 screenPos = m_camera.worldToScreen(worldPos);
-                m_buffer.setChar(screenPos.x, screenPos.y, '.');
-            }
+    Map* currentMap = m_levelLogic->getCurrentMap();
+    if (currentMap != nullptr) {
+        if (!currentMap->isWalkable(newPos)) {
+            m_player.setPosition(oldPos);
+            return;
         }
+
+        // TODO: kontrola kolize s enemies
+        // TODO: kontrola kolize s items
+        // TODO: kontrola vstupu do trapdoor
     }
 
-    // player uprostred
-    Vec2 playerScreen = m_camera.worldToScreen(m_player.getPosition());
-    m_buffer.setChar(playerScreen.x, playerScreen.y, m_player.getDisplayChar());
-
-    // info o poz.,
-    char info[100];
-    sprintf(info, "Pos: (%d,%d)",
-            m_player.getPosition().x,
-            m_player.getPosition().y);
-
-    for (int i = 0; info[i] != '\0' && i < m_buffer.getWidth(); i++) {
-        m_buffer.setChar(i, 0, info[i]);
-    }
-
-    m_buffer.display();
+    m_renderEngine.getCamera().setPosition(m_player.getPosition());
 }
