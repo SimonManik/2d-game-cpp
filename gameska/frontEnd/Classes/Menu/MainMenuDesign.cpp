@@ -20,9 +20,10 @@
 
 // Definice barev
 const int COLOR_RED = 4;
-const int COLOR_GRAY = 8;
 const int COLOR_WHITE = 7;
+const int COLOR_GRAY = 8;
 const int COLOR_BRIGHT_WHITE = 15;
+const int COLOR_NAVY = 1; // Pridana modra (Navy)
 
 // pomocna funkce pro mac (Simulace _getch) =
 #ifndef _WIN32
@@ -110,11 +111,14 @@ bool MainMenuDesign::run() {
 void MainMenuDesign::draw() {
     clearScreen();
 
+    // Ramecek cervene
     setColor(COLOR_RED);
     std::cout << "\n\n";
     printCentered("+----------------------------------------------------------------+");
     printCentered("|                                                                |");
 
+    // CAST: PAIN (Cervene)
+    setColor(COLOR_RED);
     printCentered("|                       ____   _   ___ _   _                     |");
     printCentered("|                      |  _ \\ / \\ |_ _| \\ | |                    |");
     printCentered("|                      | |_) / _ \\ | ||  \\| |                    |");
@@ -122,24 +126,27 @@ void MainMenuDesign::draw() {
     printCentered("|                      |_| /_/   \\_|_||_| \\_|                    |");
     printCentered("|                                                                |");
 
+    // CAST: & (Bile pro kontrast)
+    setColor(COLOR_BRIGHT_WHITE);
     printCentered("|                                &                               |");
-    printCentered("|                                                                |");
 
+    setColor(COLOR_NAVY);
     printCentered("|   ____  _   _  _____  _____  _____  ____   ___  _   _   ____   |");
     printCentered("|  / ___|| | | ||  ___||  ___|| ____||  _ \\ |_ _|| \\ | | / ___|  |");
     printCentered("|  \\___ \\| | | || |_   | |_   |  _|  | |_) | | | |  \\| || |  _   |");
-    printCentered("|   ___) | |_| ||  _|  |  _|  | |___ |  _ <  | | | |\\  || |_| |  |");
+    printCentered("|   ___) | |_| ||  _|  |  _|  | |___ |  _ \\  | | | |\\  || |_| |  |");
     printCentered("|  |____/ \\___/ |_|    |_|    |_____||_| \\_\\|___||_| \\_| \\____|  |");
     printCentered("|                                                                |");
 
     setColor(COLOR_GRAY);
     printCentered("|                          [ RPG GAME ]                          |");
 
+    // Spodek ramecku
     setColor(COLOR_RED);
     printCentered("|                                                                |");
     printCentered("+----------------------------------------------------------------+");
 
-    // --- stred ---
+
     printCentered("|                                          |");
     printCentered("+------------------------------------------+");
 
@@ -158,15 +165,16 @@ void MainMenuDesign::draw() {
     setColor(COLOR_RED);
     printCentered("+------------------------------------------+");
 
-    // --- SPODEK ---
+    //  SPODEK
     std::cout << "\n";
-    setColor(COLOR_GRAY);
+    // Napoveda modre (sedi k Suffering)
+    setColor(COLOR_NAVY);
     printCentered("[W/S] = move  |  [ENTER] = select");
 
     setColor(COLOR_WHITE);
 }
 
-// === pomocne FUNKCE (Cross-Platform) ===
+// pomocne FUNKCE (Cross-Platform)
 
 void MainMenuDesign::clearScreen() {
 #ifdef _WIN32
@@ -182,6 +190,7 @@ void MainMenuDesign::setColor(int color) {
 #else
     // Mac verze (překlad na ANSI kódy)
     switch(color) {
+        case 1: std::cout << "\033[34m"; break;  // Modra (Navy) - PRIDANO
         case 4: std::cout << "\033[31m"; break;  // cervena
         case 7: std::cout << "\033[0m";  break;  // Reset/bila
         case 8: std::cout << "\033[90m"; break;  // seda (Bright Black)

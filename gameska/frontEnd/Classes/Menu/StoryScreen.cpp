@@ -20,6 +20,7 @@ const int COLOR_RED = 4;
 const int COLOR_WHITE = 7;
 const int COLOR_GRAY = 8;
 const int COLOR_BRIGHT_WHITE = 15;
+const int COLOR_NAVY = 1;
 
 //  POMOCNA FUNKCE PRO MAC (Simulace _getch)
 #ifndef _WIN32
