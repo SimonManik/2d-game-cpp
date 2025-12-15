@@ -1,7 +1,7 @@
 #ifndef MAPBLOCK_H
 #define MAPBLOCK_H
 
-#include "mainInheriteClass.h" // Musi znat rodice
+#include "MainInheriteClass.h" // Musi znat rodice
 #include "../../backEnd/types/Vec2.h"
 
 class Item; //na pozděj

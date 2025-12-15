@@ -6,7 +6,7 @@
 int main() {
     auto [SCREEN_W, SCREEN_H] = TerminalUtils::getTerminalSize();
     MainMenuDesign menu;
-    if (bool gameRun = menu.run()) {
+    if (menu.run()) {
         Game game(SCREEN_W, SCREEN_H);
         game.run();
     }

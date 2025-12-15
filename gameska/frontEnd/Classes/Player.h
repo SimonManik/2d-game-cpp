@@ -8,7 +8,7 @@
 
 #include "../../backEnd/types/Vec2.h"
 #include "../../backEnd/types/Command.h"
-#include "mainInheriteClass.h"
+#include "MainInheriteClass.h"
 #include "../../backEnd/types/Color.h"
 
 class Player : public MainInheriteClass {
