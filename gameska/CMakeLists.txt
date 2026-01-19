@@ -60,6 +60,9 @@ add_executable(gameska
         frontEnd/Classes/Weapon.h
         frontEnd/Classes/Spider.h
         frontEnd/Classes/Skeleton.h
+        frontEnd/Classes/Skeleton.cpp
+        frontEnd/Classes/Spider.cpp
+        frontEnd/Classes/Rat.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
