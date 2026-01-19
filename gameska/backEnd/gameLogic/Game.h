@@ -27,6 +27,8 @@ private:
     // game objects
     Player m_player;
     bool m_running;
+    Vec2 getSpawnAtEntry(ExitDirection entryDir) const;
+    Vec2 getSpawnAtExit(ExitDirection exitDir) const;
 };
 
 #endif //GAMESKA_GAME_H

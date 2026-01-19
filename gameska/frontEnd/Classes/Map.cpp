@@ -26,7 +26,7 @@ bool Map::isInBounds(Vec2 pos) const {
 bool Map::isWalkable(Vec2 pos) const {
     if (!isInBounds(pos)) return false;
     char tile = m_tiles[pos.y][pos.x];
-    return tile == ' ' || tile == 'S' || tile == 'O' || tile == 'e' || tile == 'x';
+    return tile == ' ' || tile == 'S' || tile == 'O';
 }
 
 
@@ -174,7 +174,6 @@ void Map::generateRoom(bool hasTrapdoor, ExitDirection entryFrom, bool isFirstRo
         m_spawnPoint = spawnPoint;
         m_tiles[spawnPoint.y][spawnPoint.x] = 'S';
     } else {
-        // V ostatních místnostech spawn uprostřed (ale bez 'S')
         m_spawnPoint = Vec2(m_width / 2, m_height / 2);
     }
 
@@ -183,10 +182,14 @@ void Map::generateRoom(bool hasTrapdoor, ExitDirection entryFrom, bool isFirstRo
         Vec2 exitPoint(m_width / 2, m_height / 2 + 2);
         m_exitPoint = exitPoint;
         m_tiles[exitPoint.y][exitPoint.x] = 'O';
+
+        // V 10. místnosti JE vchod (aby se dal vrátit)
         createEntry(entryFrom);
     } else {
-        // Vytvoř VCHOD
-        createEntry(entryFrom);
+        // Vytvoř VCHOD (KROMĚ první místnosti)
+        if (!isFirstRoom) {
+            createEntry(entryFrom);
+        }
 
         // Vyber náhodný VÝCHOD
         std::random_device rd;
@@ -201,10 +204,18 @@ void Map::generateRoom(bool hasTrapdoor, ExitDirection entryFrom, bool isFirstRo
             case ExitDirection::West: oppositeEntry = ExitDirection::East; break;
         }
 
-        for (int i = 0; i < 4; ++i) {
-            ExitDirection dir = static_cast<ExitDirection>(i);
-            if (dir != entryFrom && dir != oppositeEntry) {
-                validExits.push_back(dir);
+        // V první místnosti může být východ kamkoliv
+        if (isFirstRoom) {
+            for (int i = 0; i < 4; ++i) {
+                validExits.push_back(static_cast<ExitDirection>(i));
+            }
+        } else {
+            // V ostatních NE vstup ani jeho opak
+            for (int i = 0; i < 4; ++i) {
+                ExitDirection dir = static_cast<ExitDirection>(i);
+                if (dir != entryFrom && dir != oppositeEntry) {
+                    validExits.push_back(dir);
+                }
             }
         }
 
