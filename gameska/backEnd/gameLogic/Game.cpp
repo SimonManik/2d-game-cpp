@@ -63,7 +63,7 @@ void Game::run() {
 void Game::update(Command cmd) {
     Vec2 oldPos = m_player.getPosition();
 
-    // vypocet nove pozice bez fyzickeho pohybu
+    // Vypočet nové pozice bez fyzického pohybu
     Vec2 newPos = oldPos;
     switch (cmd) {
         case Command::MOVE_UP:
@@ -84,13 +84,35 @@ void Game::update(Command cmd) {
 
     Map* currentMap = m_levelLogic->getCurrentMap();
     if (currentMap != nullptr) {
-        // kontrola, zda je cilova pozice platna
+        // Kontrola, zda je cílová pozice platná
         if (!currentMap->isWalkable(newPos)) {
             return;
         }
 
-        // kontrola trapdooru pred pohybem
-        if (currentMap->getDisplayChar(newPos) == 'O') {
+        // NOVÁ KONTROLA: Vchod (návrat zpět)
+        if (currentMap->isRoomEntry(newPos) && m_levelLogic->canGoBack()) {
+            m_levelLogic->previousRoom();
+            currentMap = m_levelLogic->getCurrentMap();
+            if (currentMap != nullptr) {
+                m_player.setPosition(currentMap->getSpawnPoint());
+                m_renderEngine.getCamera().setPosition(m_player.getPosition());
+            }
+            return;
+        }
+
+        // Kontrola východu (dopředu)
+        if (currentMap->isRoomExit(newPos)) {
+            m_levelLogic->nextRoom();
+            currentMap = m_levelLogic->getCurrentMap();
+            if (currentMap != nullptr) {
+                m_player.setPosition(currentMap->getSpawnPoint());
+                m_renderEngine.getCamera().setPosition(m_player.getPosition());
+            }
+            return;
+        }
+
+        // Kontrola trapdooru (O) před pohybem
+        if (currentMap->isExitTile(newPos)) {
             m_levelLogic->nextLevel();
             currentMap = m_levelLogic->getCurrentMap();
             if (currentMap != nullptr) {
@@ -101,7 +123,7 @@ void Game::update(Command cmd) {
         }
     }
 
-    // pokud vse proslo, teprve se hrac pohne
+    // Pokud vše prošlo, teprve se hráč pohne
     m_player.setPosition(newPos);
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
 }
