@@ -15,3 +15,5 @@ int HealingPotion::getHealingAmount() const {
 std::string HealingPotion::getDescription() const {
     return getName() + " (Heals " + std::to_string(m_healingAmount) + " HP)";
 }
+
+

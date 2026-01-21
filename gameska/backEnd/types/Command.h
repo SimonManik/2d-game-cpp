@@ -11,7 +11,8 @@ enum class Command {
     MOVE_DOWN,
     MOVE_LEFT,
     MOVE_RIGHT,
-    QUIT
+    QUIT,
+    PAUSE
 };
 
 #endif //GAMESKA_COMMAND_H
