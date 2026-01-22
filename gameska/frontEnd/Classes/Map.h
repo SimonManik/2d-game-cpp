@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../../backEnd/types/Vec2.h"
+#include "../../frontEnd/Classes/MainInheriteClass.h"
 
 class Enemy;
 
@@ -51,6 +52,18 @@ public:
     // Generování pokoje s východy
     void generateRoom(bool hasTrapdoor, ExitDirection entryFrom, bool isFirstRoom = false);
 
+    void addObject(MainInheriteClass* obj) {
+        m_objects.push_back(obj);
+    }
+
+    const std::vector<MainInheriteClass*>& getObjects() const {
+        return m_objects;
+    }
+
+    void clearObjects() {
+        m_objects.clear();
+    }
+
 private:
     int m_width;
     int m_height;
@@ -60,6 +73,7 @@ private:
     std::vector<Enemy*> m_enemies;
     ExitDirection m_currentExit;
     ExitDirection m_currentEntry; // NOVÝ člen
+    std::vector<MainInheriteClass*> m_objects;
 
     void createExit(ExitDirection dir);
     void createEntry(ExitDirection dir); // NOVÁ metoda

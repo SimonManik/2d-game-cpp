@@ -79,7 +79,20 @@ void RenderEngine::renderWorld(const Camera& camera, const Map* map) {
         }
     }
 
-    // TODO: enemies
+    // Na konci renderWorld() za tiles
+    // Vykresli všechny objekty v mapě
+    for (const auto* obj : map->getObjects()) {
+        if (!obj || obj->getType() == ObjectType::Player) continue;
+
+        Vec2 worldPos = obj->getPosition();
+        if (camera.isVisible(worldPos)) {
+            Vec2 screenPos = camera.worldToScreen(worldPos);
+            m_buffer.setChar(screenPos.x, screenPos.y,
+                            obj->getDisplayChar(),
+                            obj->getColorAnsi());
+        }
+}
+
 }
 
 void RenderEngine::renderPlayer(const Player& player, const Camera& camera) {

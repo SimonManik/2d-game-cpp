@@ -5,6 +5,22 @@
 #include "Enemy.h"
 #include <iostream>
 
+Enemy::Enemy(string name, int strength, bool isAlive, int health, int level)
+    : MainInheriteClass(Vec2(0, 0), 'E', Color::RED, ObjectType::Enemy)  // ZAVOLAT RODIČOVSKÝ KONSTRUKTOR
+    , m_name(name)
+    , m_strength(strength)
+    , m_isAlive(isAlive)
+    , m_health(health)
+    , m_damage(5 + (level - 1))
+    , m_attackCooldown(1.5f)
+    , m_timeSinceLastAttack(1.5f)
+    , m_position(Vec2(0, 0)) {
+}
+
+void Enemy::update(float deltaTime) {
+    m_timeSinceLastAttack += deltaTime;
+}
+
 
 std::string Enemy::getName() const {  //Returns the name of the enemy
     return m_name;
@@ -27,13 +43,21 @@ void Enemy::takeDamage(const int damage) {
     std::cout << m_name << " took " << damage << " damage. HP left: " << m_health << std::endl;
 }
 
-void Enemy::attack() const {
-    // Default behavior
-    std::cout << m_name << " attacks generically for " << m_strength << " damage!" << std::endl;
-}
 
 void Enemy::move(const string direction) const {
     std::cout << m_name << " moves the " << direction << "anywhere" << std::endl;
+}
+
+int Enemy::attack() {
+    if (m_timeSinceLastAttack >= m_attackCooldown) {
+        m_timeSinceLastAttack = 0.0f;
+        return m_damage;
+    }
+    return 0;
+}
+
+void Enemy::setPosition(const Vec2& pos) {
+    m_position = pos;
 }
 
 

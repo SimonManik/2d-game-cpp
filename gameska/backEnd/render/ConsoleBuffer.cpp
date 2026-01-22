@@ -44,18 +44,25 @@ void ConsoleBuffer::display() {
     //nastaveni kurzoru na pozici (0, 0)  to same jako  printf("\033[H"); na unix like
     COORD coord = {0, 0};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    for (int y=0; y < m_height; y++)
-    {
-        for (int x=0; x < m_width; x++){
-             putchar(buffer[y][x].character);
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    for (int y = 0; y < m_height; y++) {
+        for (int x = 0; x < m_width; x++) {
+            // Pokud má znak barvu, použij ANSI escape sekvence
+            if (!buffer[y][x].color.empty()) {
+                std::printf("%s", buffer[y][x].color.c_str());
+            }
+            std::putchar(buffer[y][x].character);
+            if (!buffer[y][x].color.empty()) {
+                std::printf("\033[0m");  // Reset barvy
+            }
         }
-        if (y < m_height - 1)
-        {
-             putchar('\n');
+        if (y < m_height - 1) {
+            std::putchar('\n');
         }
     }
-
-     fflush(stdout);
+    std::fflush(stdout);
 #else
     std::printf("\033[H");
 

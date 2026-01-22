@@ -48,10 +48,10 @@ public:
     //  Gettery
     // 'const' nemeni stav objektu (je to jen cteni).
     Vec2 getPosition() const { return m_position; }
-    char getDisplayChar() const { return m_displayChar; }
+    virtual char getDisplayChar() const { return m_displayChar; }
     Color getColor() const { return m_color; }
-    std::string getColorAnsi() const { return ColorUtils::toAnsiCode(m_color); }
-    ObjectType getType() const { return m_type; }
+    virtual std::string getColorAnsi() const { return ColorUtils::toAnsiCode(m_color); }
+    virtual ObjectType getType() const { return m_type; }
 
     //  setter
     void setPosition(Vec2 pos) { m_position = pos; }

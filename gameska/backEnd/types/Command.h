@@ -11,6 +11,7 @@ enum class Command {
     MOVE_DOWN,
     MOVE_LEFT,
     MOVE_RIGHT,
+    ATTACK,
     QUIT,
     PAUSE
 };

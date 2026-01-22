@@ -10,19 +10,21 @@
 #include "./../types/Vec2.h"
 #include "../render/RenderEngine.h"
 #include "../../frontEnd/Classes/Menu/PauseMenu.h"
-
+#include "../../frontEnd/Classes/Enemy.h"
 
 Game::Game(int screenW, int screenH)
     : m_renderEngine(screenW, screenH)
     , m_inputHandler()
     , m_player(Vec2(0, 0))
     , m_levelLogic(nullptr)
+    , m_currentEnemy(nullptr)
     , m_running(false) {
     m_levelLogic = new LevelLogic();
 }
 
 Game::~Game() {
     delete m_levelLogic;
+    delete m_currentEnemy;
 }
 
 void Game::run() {
@@ -33,6 +35,10 @@ void Game::run() {
     Map* currentMap = m_levelLogic->getCurrentMap();
     if (currentMap != nullptr) {
         m_player.setPosition(currentMap->getSpawnPoint());
+        Vec2 enemyPos = currentMap->getSpawnPoint();
+        enemyPos.x += 5;  // Posun od hráče
+        m_currentEnemy = new Enemy("Goblin", 10, true, 50, m_levelLogic->getCurrentLevel());
+        m_currentEnemy->setPosition(enemyPos);
     }
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
     m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentLevel(),
@@ -134,6 +140,14 @@ void Game::update(Command cmd) {
                 // Trapdoor = spawn uprostřed
                 m_player.setPosition(currentMap->getSpawnPoint());
                 m_renderEngine.getCamera().setPosition(m_player.getPosition());
+
+                // Spawn noveho nepritele v nove arene
+                delete m_currentEnemy;
+                Vec2 newEnemyPos = currentMap->getSpawnPoint();
+                newEnemyPos.x += 5;  // Posun od hráče
+                m_currentEnemy = new Enemy("Goblin", 10, true, 50, m_levelLogic->getCurrentLevel());
+                m_currentEnemy->setPosition(newEnemyPos);
+                currentMap->addObject(m_currentEnemy);
             }
             return;
         }
@@ -142,6 +156,24 @@ void Game::update(Command cmd) {
     // Pokud vše prošlo, teprve se hráč pohne
     m_player.setPosition(newPos);
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
+
+    //combat na mezerník
+    if (cmd == Command::ATTACK && m_currentEnemy && m_currentEnemy->isAlive()) {
+        Vec2 playerPos = m_player.getPosition();
+        Vec2 enemyPos = m_currentEnemy->getPosition();
+
+        // Kontrola vzdalenosti pro útok (max 2 políčka)
+        int distance = abs(playerPos.x - enemyPos.x) + abs(playerPos.y - enemyPos.y);
+        if (distance <= 2) {
+            int damage = m_player.attack();
+            if (damage > 0) {
+                m_currentEnemy->takeDamage(damage);
+                std::cout << "Útok! Enemy HP: " << m_currentEnemy->getHealth() << std::endl;
+            }
+        }
+        return;  // Útok spotřebuje tah
+    }
+
 }
 
 Vec2 Game::getSpawnAtEntry(ExitDirection entryDir) const {

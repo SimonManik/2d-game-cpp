@@ -16,6 +16,9 @@ private:
     // Proměnné pro správu životů, které bude zobrazovat tvůj HUD
     int m_health;
     int m_maxHealth;
+    int m_attackDamage = 10;
+    bool m_canAttack = true;
+    float m_attackCooldown = 0.5f;
 
 public:
     Player(Vec2 startPos)
@@ -39,6 +42,17 @@ public:
     void handleCommand(Command cmd);
     void update() override {}
     char getDisplayChar() const { return '@'; }
+
+    // Combat
+    int attack() {
+        if (m_canAttack) {
+            m_canAttack = false;
+            return m_attackDamage;
+        }
+        return 0;
+    }
+
+    void resetAttack() { m_canAttack = true; }
 };
 
 #endif //GAMESKA_PLAYER_H
