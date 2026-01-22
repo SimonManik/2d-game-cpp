@@ -46,10 +46,9 @@ void Game::run() {
     Map* currentMap = m_levelLogic->getCurrentMap();
     if (currentMap != nullptr) {
         m_player.setPosition(currentMap->getSpawnPoint());
-        Vec2 enemyPos = currentMap->getSpawnPoint();
-        enemyPos.x += 5;  // Posun od hráče
-        m_currentEnemy = new Enemy("Goblin", 10, true, 50, m_levelLogic->getCurrentLevel());
-        m_currentEnemy->setPosition(enemyPos);
+
+        // Spawn enemy v první místnosti
+        spawnEnemyInCurrentRoom();
     }
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
 
@@ -149,6 +148,45 @@ void Game::update(Command cmd) {
             return;
         }
 
+        // KONTROLA KOLIZE S ENEMY - Nelze projít přes živého nepřítele
+        if (m_currentEnemy && m_currentEnemy->isAlive() &&
+            newPos.x == m_currentEnemy->getPosition().x &&
+            newPos.y == m_currentEnemy->getPosition().y) {
+
+            std::cout << "\nNarazil jsi na " << m_currentEnemy->getName() << "! Automatický útok!" << std::endl;
+
+            // Pokud se hráč snaží jít na pozici enemy, zaútočí místo toho
+            int damage = m_player.attack();
+            m_player.resetAttack();
+
+            if (damage > 0) {
+                m_currentEnemy->takeDamage(damage);
+                std::cout << ">>> Způsobil jsi " << damage << " damage! " << m_currentEnemy->getName() << " HP: " << m_currentEnemy->getHealth() << std::endl;
+
+                if (m_currentEnemy->getHealth() <= 0) {
+                    std::cout << "\n*** " << m_currentEnemy->getName() << " BYL PORAŽEN! ***\n" << std::endl;
+                    return;  // Enemy je mrtvý, zmizí při dalším renderu
+                }
+            }
+
+            // Enemy útočí zpět (pouze pokud je naživu)
+            if (m_currentEnemy->isAlive()) {
+                int enemyDamage = m_currentEnemy->attack();
+                if (enemyDamage > 0) {
+                    m_player.takeDamage(enemyDamage);
+                    std::cout << "<<< " << m_currentEnemy->getName() << " útočí! Dostal jsi " << enemyDamage << " damage! Tvoje HP: " << m_player.getHealth() << "/" << m_player.getMaxHealth() << "\n" << std::endl;
+
+                    // Kontrola smrti hráče
+                    if (m_player.getHealth() <= 0) {
+                        std::cout << "\n=== GAME OVER ===" << std::endl;
+                        std::cout << "Byl jsi poražen!" << std::endl;
+                        m_running = false;
+                    }
+                }
+            }
+            return;  // Zablokovat pohyb
+        }
+
         // NOVÁ KONTROLA: Vchod (návrat zpět)
         if (currentMap->isRoomEntry(newPos) && m_levelLogic->canGoBack()) {
             m_levelLogic->previousRoom();
@@ -171,6 +209,9 @@ void Game::update(Command cmd) {
                 Vec2 entrySpawn = getSpawnAtEntry(currentMap->getCurrentEntry());
                 m_player.setPosition(entrySpawn);
                 m_renderEngine.getCamera().setPosition(m_player.getPosition());
+
+                // Spawn enemy v nové místnosti
+                spawnEnemyInCurrentRoom();
             }
             return;
         }
@@ -185,12 +226,7 @@ void Game::update(Command cmd) {
                 m_renderEngine.getCamera().setPosition(m_player.getPosition());
 
                 // Spawn noveho nepritele v nove arene
-                delete m_currentEnemy;
-                Vec2 newEnemyPos = currentMap->getSpawnPoint();
-                newEnemyPos.x += 5;  // Posun od hráče
-                m_currentEnemy = new Enemy("Goblin", 10, true, 50, m_levelLogic->getCurrentLevel());
-                m_currentEnemy->setPosition(newEnemyPos);
-                currentMap->addObject(m_currentEnemy);
+                spawnEnemyInCurrentRoom();
             }
             return;
         }
@@ -199,24 +235,82 @@ void Game::update(Command cmd) {
     // Pokud vše prošlo, teprve se hráč pohne
     m_player.setPosition(newPos);
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
+}
 
-    //combat na mezerník
-    if (cmd == Command::ATTACK && m_currentEnemy && m_currentEnemy->isAlive()) {
-        Vec2 playerPos = m_player.getPosition();
-        Vec2 enemyPos = m_currentEnemy->getPosition();
+void Game::spawnEnemyInCurrentRoom() {
+    Map* currentMap = m_levelLogic->getCurrentMap();
+    if (currentMap == nullptr) return;
 
-        // Kontrola vzdalenosti pro útok (max 2 políčka)
-        int distance = abs(playerPos.x - enemyPos.x) + abs(playerPos.y - enemyPos.y);
-        if (distance <= 2) {
-            int damage = m_player.attack();
-            if (damage > 0) {
-                m_currentEnemy->takeDamage(damage);
-                std::cout << "Útok! Enemy HP: " << m_currentEnemy->getHealth() << std::endl;
-            }
-        }
-        return;  // Útok spotřebuje tah
+    // Smazat starého enemy
+    delete m_currentEnemy;
+
+    // Vytvořit nového enemy
+    Vec2 enemyPos = currentMap->getSpawnPoint();
+    enemyPos.x -= 4;  // Vlevo od spawn pointu
+    enemyPos.y += 0;  // Stejná výška
+
+    // Název enemy podle levelu
+    std::string enemyName = "Goblin";
+    int level = m_levelLogic->getCurrentLevel();
+    if (level >= 5) enemyName = "Orc";
+    if (level >= 10) enemyName = "Troll";
+
+    int enemyHealth = 50 + (level - 1) * 10;  // Víc HP na vyšších levelech
+
+    m_currentEnemy = new Enemy(enemyName, 10, true, enemyHealth, level);
+    m_currentEnemy->setPosition(enemyPos);
+    currentMap->addObject(m_currentEnemy);
+
+    // Reset časovače pro nového enemy
+    m_enemyAttackTimer = 0.0f;
+
+    std::cout << "\n*** OBJEVIL SE " << enemyName << "! ***" << std::endl;
+    std::cout << "Level: " << level << " | HP: " << enemyHealth << std::endl;
+    std::cout << "Útok mezerníkem! Enemy útočí každých 5 sekund!\n" << std::endl;
+}
+
+void Game::updateEnemyAI(float deltaTime) {
+    // Pokud není enemy nebo je mrtvý, nic nedělej
+    if (!m_currentEnemy || !m_currentEnemy->isAlive()) {
+        m_enemyAttackTimer = 0.0f;
+        return;
     }
 
+    // Přičti čas
+    m_enemyAttackTimer += deltaTime;
+
+    // Pokud uplynulo 5 sekund, enemy zaútočí
+    if (m_enemyAttackTimer >= m_enemyAttackInterval) {
+        m_enemyAttackTimer = 0.0f;  // Reset časovače
+
+        // Kontrola vzdálenosti k hráči
+        Vec2 playerPos = m_player.getPosition();
+        Vec2 enemyPos = m_currentEnemy->getPosition();
+        int distance = abs(playerPos.x - enemyPos.x) + abs(playerPos.y - enemyPos.y);
+
+        // Enemy útočí pouze pokud je hráč dostatečně blízko (max 5 políček)
+        if (distance <= 5) {
+            int damage = m_currentEnemy->attack();
+            if (damage > 0) {
+                m_player.takeDamage(damage);
+                std::cout << "\n!!! " << m_currentEnemy->getName() << " ÚTOČÍ AUTOMATICKY! !!!" << std::endl;
+                std::cout << "<<< Dostal jsi " << damage << " damage! Tvoje HP: "
+                          << m_player.getHealth() << "/" << m_player.getMaxHealth() << "\n" << std::endl;
+
+                // Kontrola smrti hráče
+                if (m_player.getHealth() <= 0) {
+                    std::cout << "\n=== GAME OVER ===" << std::endl;
+                    std::cout << "Byl jsi poražen " << m_currentEnemy->getName() << "em!" << std::endl;
+                    m_running = false;
+                }
+
+                // Re-render po útoku enemy
+                m_renderEngine.render(m_player, m_renderEngine.getCamera(),
+                                    m_levelLogic->getCurrentLevel(),
+                                    m_levelLogic->getCurrentMap());
+            }
+        }
+    }
 }
 
 Vec2 Game::getSpawnAtEntry(ExitDirection entryDir) const {

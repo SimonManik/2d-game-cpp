@@ -83,6 +83,8 @@ Command InputHandler::getInput() {
             return Command::MOVE_LEFT;
         case 'd': case 'D':
             return Command::MOVE_RIGHT;
+        case ' ':  // Mezerník pro útok
+            return Command::ATTACK;
         case 27: case 'q': case 'Q':
             return Command::QUIT;
         default:
