@@ -23,16 +23,20 @@ int _getch() {
 
 PauseMenu::Action PauseMenu::show() {
     std::cout << "\n\n    === GAME PAUSED ===\n";
-    std::cout << "    [R] Resume\n";
-    std::cout << "    [E] Exit to Menu\n";
+    std::cout << "    [SPACE]     Resume\n";
+    std::cout << "    [BACKSPACE] Exit to Menu\n";
     std::cout << "    Choose: ";
 
     while (true) {
         int key = _getch();
-        if (key == 'r' || key == 'R') {
+        
+        // mezernik
+        if (key == 32) {
             return RESUME;
         }
-        if (key == 'e' || key == 'E') {
+        
+        // Backspace
+        if (key == 8) {
             return EXIT_TO_MENU;
         }
     }
