@@ -1,21 +1,18 @@
-//
-// Created by manik on 11.12.2025.
-//
 #include "MainMenuDesign.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
-// podminene includovani knihoven
+// Podmíněné includování knihoven
 #ifdef _WIN32
     // Kód pro Windows
     #include <conio.h>
     #include <windows.h>
+    #include <mmsystem.h>
 #else
-    // kod pro Mac
     #include <termios.h>
     #include <unistd.h>
-    #include <cstdlib> // Pro system("clear")
+    #include <cstdlib>
 #endif
 
 // Definice barev
@@ -23,9 +20,8 @@ const int COLOR_RED = 4;
 const int COLOR_WHITE = 7;
 const int COLOR_GRAY = 8;
 const int COLOR_BRIGHT_WHITE = 15;
-const int COLOR_NAVY = 1; // Pridana modra (Navy)
+const int COLOR_NAVY = 1;
 
-// pomocna funkce pro mac (Simulace _getch) =
 #ifndef _WIN32
 int _getch() {
     struct termios oldt, newt;
@@ -47,11 +43,12 @@ MainMenuDesign::MainMenuDesign() {
 
     options = {"Play Game", "Credits", "Story", "Exit"};
 
-    //inicializace prikazu
+    // Inicializace příkazů [cite: 267-268]
     commands[0] = new PlayCommand(startGame, running);
     commands[1] = new CreditsCommand(creditsScreen);
     commands[2] = new StoryCommand(storyScreen);
     commands[3] = new ExitCommand(running);
+
 }
 
 MainMenuDesign::~MainMenuDesign() {
@@ -65,61 +62,68 @@ bool MainMenuDesign::run() {
     running = true;
     startGame = false;
 
+    // Spuštění hudby pro MENU
+#ifdef _WIN32
+    PlaySound(TEXT("music/menu_theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+#endif
+
     while (running) {
         draw();
 
         int key = _getch();
 
-        // klavesnie posle kod 224 nebo 0 cimz signalizuje ze nasleduji sipky
+        // Ošetření šipek a speciálních kláves
         if (key == 224 || key == 0) {
-            key = _getch(); // nacteni kodu sipky (72 nebo 80)
+            key = _getch(); // Načtení kódu šipky (72 nahoru, 80 dolů)
         }
 
-        // samotne ovladani - reaguje na WASD i na Šipky
-        if (key == 'w' || key == 'W' || key == 72) { // 72 je kod je pro sipku nahoru
+        // Ovládání - WASD + Šipky
+        if (key == 'w' || key == 'W' || key == 72) {
             if (currentSelection > 0) {
                 currentSelection--;
-#ifdef _WIN32
-                Beep(600, 50); // zvukova odezva pri pohybu jen na windowsech
-#endif
+                #ifdef _WIN32
+                Beep(600, 50); // Zvuková odezva pohybu [cite: 273-274]
+                #endif
             }
         }
-        else if (key == 's' || key == 'S' || key == 80) { // 80 je kod pro sipku dolu
+        else if (key == 's' || key == 'S' || key == 80) {
             if (currentSelection < (int)options.size() - 1) {
                 currentSelection++;
-#ifdef _WIN32
+                #ifdef _WIN32
                 Beep(600, 50);
                 #endif
             }
         }
-        else if (key == 13 || key == 10) { // ENTER (13 pro Win, 10 pro Mac/Linux)
-#ifdef _WIN32
+        else if (key == 13 || key == 10) { // ENTER
+            #ifdef _WIN32
             Beep(800, 80);
             Beep(1000, 80);
-#endif
+            #endif
 
-            // vykonani prikazu podle aktualniho vyberu
             if (commands.find(currentSelection) != commands.end()) {
                 commands[currentSelection]->execute();
             }
         }
     }
 
-    return startGame; //pokud se spusti hra vrati true
-}
+    // --- ZASTAVENÍ HUDBY ---
+    // Při odchodu z menu do hry nebo ukončení hudbu vypneme
+    #ifdef _WIN32
+    PlaySound(NULL, 0, 0);
+    #endif
 
-// GRAFIKA A VZHLED
+    return startGame;
+}
 
 void MainMenuDesign::draw() {
     clearScreen();
 
-    // Ramecek cervene
     setColor(COLOR_RED);
     std::cout << "\n\n";
     printCentered("+----------------------------------------------------------------+");
     printCentered("|                                                                |");
 
-    // CAST: PAIN (Cervene)
+    // ASCII ART - PAIN [cite: 281-285]
     setColor(COLOR_RED);
     printCentered("|                       ____   _   ___ _   _                     |");
     printCentered("|                      |  _ \\ / \\ |_ _| \\ | |                    |");
@@ -128,10 +132,10 @@ void MainMenuDesign::draw() {
     printCentered("|                      |_| /_/   \\_|_||_| \\_|                    |");
     printCentered("|                                                                |");
 
-    // CAST: & (Bile pro kontrast)
     setColor(COLOR_BRIGHT_WHITE);
     printCentered("|                                &                               |");
 
+    // ASCII ART - SUFFERING [cite: 289-293]
     setColor(COLOR_NAVY);
     printCentered("|   ____  _   _  _____  _____  _____  ____   ___  _   _   ____   |");
     printCentered("|  / ___|| | | ||  ___||  ___|| ____||  _ \\ |_ _|| \\ | | / ___|  |");
@@ -143,12 +147,9 @@ void MainMenuDesign::draw() {
     setColor(COLOR_GRAY);
     printCentered("|                          [ RPG GAME ]                          |");
 
-    // Spodek ramecku
     setColor(COLOR_RED);
     printCentered("|                                                                |");
     printCentered("+----------------------------------------------------------------+");
-
-
     printCentered("|                                          |");
     printCentered("+------------------------------------------+");
 
@@ -167,22 +168,18 @@ void MainMenuDesign::draw() {
     setColor(COLOR_RED);
     printCentered("+------------------------------------------+");
 
-    //  SPODEK
     std::cout << "\n";
-    // Napoveda modre (sedi k Suffering)
     setColor(COLOR_NAVY);
     printCentered("[W/S] = move  |  [ENTER] = select");
 
     setColor(COLOR_WHITE);
 }
 
-// pomocne FUNKCE (Cross-Platform)
-
 void MainMenuDesign::clearScreen() {
 #ifdef _WIN32
-    system("cls"); // Windows
+    system("cls");
 #else
-    system("clear"); // Mac/Linux
+    system("clear");
 #endif
 }
 
@@ -190,20 +187,19 @@ void MainMenuDesign::setColor(int color) {
 #ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 #else
-    // Mac verze (překlad na ANSI kódy)
     switch(color) {
-        case 1: std::cout << "\033[34m"; break;  // Modra (Navy) - PRIDANO
-        case 4: std::cout << "\033[31m"; break;  // cervena
-        case 7: std::cout << "\033[0m";  break;  // Reset/bila
-        case 8: std::cout << "\033[90m"; break;  // seda (Bright Black)
-        case 15: std::cout << "\033[97m"; break; // jasne  bila
+        case 1: std::cout << "\033[34m"; break;
+        case 4: std::cout << "\033[31m"; break;
+        case 7: std::cout << "\033[0m";  break;
+        case 8: std::cout << "\033[90m"; break;
+        case 15: std::cout << "\033[97m"; break;
         default: std::cout << "\033[0m"; break;
     }
 #endif
 }
 
 void MainMenuDesign::printCentered(const std::string& text) {
-    int width = 80; // standartni sirka konzole
+    int width = 80;
     int padding = (width - text.length()) / 2;
     if (padding > 0) std::cout << std::string(padding, ' ');
     std::cout << text << std::endl;

@@ -27,48 +27,91 @@ Game::~Game() {
 
 void Game::run() {
     m_running = true;
+    m_totalTime = 0.0; // Resetování času na začátku každé hry
 
-    // inicializace
+    // SPUŠTĚNÍ HERNÍ HUDBY
+    #ifdef _WIN32
+    PlaySound(TEXT("music/dungeon_theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+    #endif
+
+    // Inicializace prvního levelu
     m_levelLogic->nextLevel();
+
+    // Příprava pro měření času (startovní bod)
+    auto lastTick = std::chrono::steady_clock::now();
+
+    // Nastavení počáteční pozice hráče a kamery na mapě
     Map* currentMap = m_levelLogic->getCurrentMap();
     if (currentMap != nullptr) {
         m_player.setPosition(currentMap->getSpawnPoint());
     }
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
-    m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentLevel(),
-    m_levelLogic->getCurrentMap());
-    while (m_running) {
 
+    // Prvotní vykreslení scény
+    m_renderEngine.render(m_player, m_renderEngine.getCamera(),
+                         m_levelLogic->getCurrentLevel(), (int)m_totalTime,
+                         m_levelLogic->getCurrentMap());
+
+    // HLAVNÍ HERNÍ SMYČKA
+    while (m_running) {
+        // 1. AKTUALIZACE ČASU
+        // Tento blok počítá, kolik času uběhlo od posledního průchodu smyčkou
+        auto now = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsed = now - lastTick;
+        m_totalTime += elapsed.count();
+        lastTick = now;
+
+        // 2. KONTROLA VSTUPU (pokud hráč nic nemačká)
         if (!m_inputHandler.kbhit()) {
+            // Překreslujeme UI, aby vteřiny na hodinách běžely plynule
+            m_renderEngine.render(m_player, m_renderEngine.getCamera(),
+                                 m_levelLogic->getCurrentLevel(), (int)m_totalTime,
+                                 m_levelLogic->getCurrentMap());
+
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            continue;
+            continue; // Skočí zpět na začátek while
         }
 
+        // 3. ZÍSKÁNÍ A ZPRACOVÁNÍ PŘÍKAZU
         Command cmd = m_inputHandler.getInput();
 
+        // Filtrování systémových příkazů (NONE, QUIT, PAUSE)
         if (cmd == Command::NONE) continue;
+
         if (cmd == Command::QUIT) {
             m_running = false;
             continue;
         }
-        
-        if (cmd == Command::PAUSE) {  //pro pauz menu
+
+        if (cmd == Command::PAUSE) {
             auto action = PauseMenu::show();
             if (action == PauseMenu::EXIT_TO_MENU) {
                 m_running = false;
                 continue;
             }
+            // Po návratu z menu resetujeme lastTick na aktuální čas,
+            // aby se doba strávená v pauze nepřičetla k hernímu času
+            lastTick = std::chrono::steady_clock::now();
         }
 
+        // 4. LOGIKA POHYBU
         update(cmd);
 
-        // render
-        m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentLevel(),
-        m_levelLogic->getCurrentMap());
+        // 5. FINÁLNÍ RENDER (vykreslení po pohybu hráče)
+        // 5 parametrů ve správném pořadí: Player, Camera, Level, Time, Map
+        m_renderEngine.render(m_player, m_renderEngine.getCamera(),
+                             m_levelLogic->getCurrentLevel(), (int)m_totalTime,
+                             m_levelLogic->getCurrentMap());
     }
 
+    // Výpisy po ukončení smyčky
     std::cout << "x: " << m_player.getPosition().x << ", y:" << m_player.getPosition().y << std::endl;
-    std::cout << m_levelLogic->getCurrentLevel() << std::endl;
+    std::cout << "Reached Level: " << m_levelLogic->getCurrentLevel() << std::endl;
+
+    // ZASTAVENÍ HUDBY PŘI KONCI HRY
+    #ifdef _WIN32
+    PlaySound(NULL, 0, 0);
+    #endif
 }
 
 void Game::update(Command cmd) {

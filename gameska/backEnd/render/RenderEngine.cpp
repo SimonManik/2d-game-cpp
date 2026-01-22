@@ -14,7 +14,7 @@ RenderEngine::RenderEngine(int screenW, int screenH)
 RenderEngine::~RenderEngine() {
 }
 
-void RenderEngine::render(const Player& player, const Camera& camera, int currentLevel, const Map* map) {
+void RenderEngine::render(const Player& player, const Camera& camera, int currentLevel, int timeSeconds,const Map* map) {
     m_buffer.clear();
 
     // Render game world
@@ -28,6 +28,7 @@ void RenderEngine::render(const Player& player, const Camera& camera, int curren
     // UIs
     // vykresleni statickeho UI
     // Předáváme buffer a data z hráče/levelu (nyní včetně maxHealth)
+    // UI se kresli jako posledni vrstva
     UIRender::renderStaticUI(m_buffer, player.getHealth(), player.getMaxHealth(), currentLevel);
 
     // docasne UI

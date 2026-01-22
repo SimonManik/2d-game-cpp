@@ -18,6 +18,7 @@ public:
 
 private:
     void update(Command cmd);
+    double m_totalTime = 0.0;
 
     // modules
     RenderEngine m_renderEngine;
