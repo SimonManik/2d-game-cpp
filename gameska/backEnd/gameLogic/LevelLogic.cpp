@@ -4,7 +4,7 @@
 LevelLogic::LevelLogic()
     : m_scalePerLevel(0.2f)
     , m_currentMap(nullptr)
-    , m_currentLevel(1)
+    , m_currentLevel(0)
     , m_currentRoom(1)
     , m_lastExitDirection(ExitDirection::North) {
     generateMap();
@@ -93,17 +93,16 @@ void LevelLogic::previousRoom() {
 }
 
 void LevelLogic::nextLevel() {
-    // Vyčisti historii předchozího levelu
+    // Vycisti historii predchoziho levelu
     for (RoomState& state : m_roomHistory) {
         if (state.map != nullptr) {
             delete state.map;
         }
     }
     m_roomHistory.clear();
-
     m_scalePerLevel += 0.2f;
     m_currentLevel++;
-    m_currentRoom = 1; // Reset místností
+    m_currentRoom = 1; // Reset mistnosti
     m_lastExitDirection = ExitDirection::North;
 
     if (m_currentMap != nullptr) {
