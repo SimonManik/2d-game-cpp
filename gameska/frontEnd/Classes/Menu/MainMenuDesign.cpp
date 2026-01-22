@@ -69,41 +69,43 @@ bool MainMenuDesign::run() {
         draw();
 
         int key = _getch();
-        if (key == 224) key = _getch(); // Ošetření šipek na Windows
 
-        // ovladani
-        if (key == 'w' || key == 'W' || key == 72) { // Nahoru
+        // klavesnie posle kod 224 nebo 0 cimz signalizuje ze nasleduji sipky
+        if (key == 224 || key == 0) {
+            key = _getch(); // nacteni kodu sipky (72 nebo 80)
+        }
+
+        // samotne ovladani - reaguje na WASD i na Šipky
+        if (key == 'w' || key == 'W' || key == 72) { // 72 je kod je pro sipku nahoru
             if (currentSelection > 0) {
                 currentSelection--;
-                // ZVUK JEN NA WINDOWS
-                #ifdef _WIN32
-                Beep(600, 50);
-                #endif
+#ifdef _WIN32
+                Beep(600, 50); // zvukova odezva pri pohybu jen na windowsech
+#endif
             }
         }
-        else if (key == 's' || key == 'S' || key == 80) { // Dolu
-            if (currentSelection < options.size() - 1) {
+        else if (key == 's' || key == 'S' || key == 80) { // 80 je kod pro sipku dolu
+            if (currentSelection < (int)options.size() - 1) {
                 currentSelection++;
-                // ZVUK JEN NA WINDOWS
-                #ifdef _WIN32
+#ifdef _WIN32
                 Beep(600, 50);
                 #endif
             }
         }
-        else if (key == 13 || key == 10) { // ENTER (13 Win, 10 Mac)
-            // ZVUK JEN NA WINDOWS
-            #ifdef _WIN32
+        else if (key == 13 || key == 10) { // ENTER (13 pro Win, 10 pro Mac/Linux)
+#ifdef _WIN32
             Beep(800, 80);
             Beep(1000, 80);
-            #endif
+#endif
 
+            // vykonani prikazu podle aktualniho vyberu
             if (commands.find(currentSelection) != commands.end()) {
                 commands[currentSelection]->execute();
             }
         }
     }
 
-    return startGame;
+    return startGame; //pokud se spusti hra vrati true
 }
 
 // GRAFIKA A VZHLED
