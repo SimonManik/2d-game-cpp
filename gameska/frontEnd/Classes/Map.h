@@ -6,35 +6,50 @@
 
 class Enemy;
 
+enum class ExitDirection {
+    North,
+    South,
+    East,
+    West
+};
+
 class Map {
 public:
     Map(int width, int height);
     ~Map();
 
-    // metody pro tiles
+    // Metody pro tiles
     bool isWalkable(Vec2 pos) const;
     bool isInBounds(Vec2 pos) const;
     bool isExitTile(Vec2 pos) const;
+    bool isRoomExit(Vec2 pos) const;
+    bool isRoomEntry(Vec2 pos) const; // NOVÁ metoda
     char getDisplayChar(Vec2 pos) const;
     void setTile(Vec2 pos, char c);
 
-    // spawn point
+    // Spawn point
     Vec2 getSpawnPoint() const { return m_spawnPoint; }
     void setSpawnPoint(Vec2 pos) { m_spawnPoint = pos; }
 
-    // ytrapDoor
+    // Trapdoor
     Vec2 getExitPoint() const { return m_exitPoint; }
     void setExitPoint(Vec2 pos) { m_exitPoint = pos; }
-    bool hasExit() const { return m_hasExit; }
 
-    // enemies
+    // Enemies
     void addEnemy(Enemy* e);
     std::vector<Enemy*>& getEnemies() { return m_enemies; }
-    const std::vector<Enemy*>& getEnemies() const { return m_enemies; }
 
-    // gettery
+    // Gettery
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }
+
+
+    // Getter pro aktuální východ a vchod
+    ExitDirection getCurrentExit() const { return m_currentExit; }
+    ExitDirection getCurrentEntry() const { return m_currentEntry; }
+
+    // Generování pokoje s východy
+    void generateRoom(bool hasTrapdoor, ExitDirection entryFrom, bool isFirstRoom = false);
 
 private:
     int m_width;
@@ -42,8 +57,12 @@ private:
     std::vector<std::vector<char>> m_tiles;
     Vec2 m_spawnPoint;
     Vec2 m_exitPoint;
-    bool m_hasExit;
     std::vector<Enemy*> m_enemies;
+    ExitDirection m_currentExit;
+    ExitDirection m_currentEntry; // NOVÝ člen
+
+    void createExit(ExitDirection dir);
+    void createEntry(ExitDirection dir); // NOVÁ metoda
 };
 
 #endif //MAP_H

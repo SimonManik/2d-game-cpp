@@ -74,7 +74,7 @@ void Game::run() {
 void Game::update(Command cmd) {
     Vec2 oldPos = m_player.getPosition();
 
-    // vypocet nove pozice bez fyzickeho pohybu
+    // Vypočet nové pozice bez fyzického pohybu
     Vec2 newPos = oldPos;
     switch (cmd) {
         case Command::MOVE_UP:
@@ -95,16 +95,43 @@ void Game::update(Command cmd) {
 
     Map* currentMap = m_levelLogic->getCurrentMap();
     if (currentMap != nullptr) {
-        // kontrola, zda je cilova pozice platna
+        // Kontrola, zda je cílová pozice platná
         if (!currentMap->isWalkable(newPos)) {
             return;
         }
 
-        // kontrola trapdooru pred pohybem
-        if (currentMap->getDisplayChar(newPos) == 'O') {
+        // NOVÁ KONTROLA: Vchod (návrat zpět)
+        if (currentMap->isRoomEntry(newPos) && m_levelLogic->canGoBack()) {
+            m_levelLogic->previousRoom();
+            currentMap = m_levelLogic->getCurrentMap();
+            if (currentMap != nullptr) {
+                // Spawn u východu předchozí místnosti
+                Vec2 entrySpawn = getSpawnAtExit(currentMap->getCurrentExit());
+                m_player.setPosition(entrySpawn);
+                m_renderEngine.getCamera().setPosition(m_player.getPosition());
+            }
+            return;
+        }
+
+        // Kontrola východu (dopředu)
+        if (currentMap->isRoomExit(newPos)) {
+            m_levelLogic->nextRoom();
+            currentMap = m_levelLogic->getCurrentMap();
+            if (currentMap != nullptr) {
+                // Spawn u vchodu nové místnosti
+                Vec2 entrySpawn = getSpawnAtEntry(currentMap->getCurrentEntry());
+                m_player.setPosition(entrySpawn);
+                m_renderEngine.getCamera().setPosition(m_player.getPosition());
+            }
+            return;
+        }
+
+        // Kontrola trapdooru (O) před pohybem - UPROSTŘED SPAWNU
+        if (currentMap->isExitTile(newPos)) {
             m_levelLogic->nextLevel();
             currentMap = m_levelLogic->getCurrentMap();
             if (currentMap != nullptr) {
+                // Trapdoor = spawn uprostřed
                 m_player.setPosition(currentMap->getSpawnPoint());
                 m_renderEngine.getCamera().setPosition(m_player.getPosition());
             }
@@ -112,7 +139,43 @@ void Game::update(Command cmd) {
         }
     }
 
-    // pokud vse proslo, teprve se hrac pohne
+    // Pokud vše prošlo, teprve se hráč pohne
     m_player.setPosition(newPos);
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
+}
+
+Vec2 Game::getSpawnAtEntry(ExitDirection entryDir) const {
+    Map* map = m_levelLogic->getCurrentMap();
+    int centerX = map->getWidth() / 2;
+    int centerY = map->getHeight() / 2;
+
+    switch (entryDir) {
+        case ExitDirection::North:
+            return Vec2(centerX, 2); // Kousek od horního okraje
+        case ExitDirection::South:
+            return Vec2(centerX, map->getHeight() - 3);
+        case ExitDirection::East:
+            return Vec2(map->getWidth() - 3, centerY);
+        case ExitDirection::West:
+            return Vec2(2, centerY);
+    }
+    return Vec2(centerX, centerY);
+}
+
+Vec2 Game::getSpawnAtExit(ExitDirection exitDir) const {
+    Map* map = m_levelLogic->getCurrentMap();
+    int centerX = map->getWidth() / 2;
+    int centerY = map->getHeight() / 2;
+
+    switch (exitDir) {
+        case ExitDirection::North:
+            return Vec2(centerX, 2);
+        case ExitDirection::South:
+            return Vec2(centerX, map->getHeight() - 3);
+        case ExitDirection::East:
+            return Vec2(map->getWidth() - 3, centerY);
+        case ExitDirection::West:
+            return Vec2(2, centerY);
+    }
+    return Vec2(centerX, centerY);
 }

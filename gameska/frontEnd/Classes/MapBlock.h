@@ -4,7 +4,7 @@
 #include "MainInheriteClass.h" // Musi znat rodice
 #include "../../backEnd/types/Vec2.h"
 
-class Item; //na pozděj
+class Item; //na pozdej
 
 class MapBlock : public MainInheriteClass {
 private:
