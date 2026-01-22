@@ -23,7 +23,7 @@ protected:
     int m_damage;
     float m_attackCooldown = 1.5f;
     float m_timeSinceLastAttack = 0.0f;
-    Vec2 m_position;
+    // m_position zděděná z MainInheriteClass
 
 public:
 
@@ -45,9 +45,7 @@ public:
 
     virtual void move(string direction) const;
 
-    Vec2 getPosition() const {
-        return m_position;
-    }
+    // getPosition() je zděděná z MainInheriteClass
 
     int getHealth() const {
         return m_health;

@@ -5,6 +5,7 @@
 #include "RenderEngine.h"
 #include "../types/Color.h"
 #include "UIRender.h"
+#include "../../frontEnd/Classes/Enemy.h"
 
 RenderEngine::RenderEngine(int screenW, int screenH)
     : m_buffer(screenW, screenH)
@@ -83,6 +84,13 @@ void RenderEngine::renderWorld(const Camera& camera, const Map* map) {
     // Vykresli všechny objekty v mapě
     for (const auto* obj : map->getObjects()) {
         if (!obj || obj->getType() == ObjectType::Player) continue;
+
+        // Nevykreslovat mrtvé enemy
+        if (obj->getType() == ObjectType::Enemy) {
+            const auto* enemy = dynamic_cast<const Enemy*>(obj);
+            if (enemy && !enemy->isAlive()) continue;
+        }
+
 
         Vec2 worldPos = obj->getPosition();
         if (camera.isVisible(worldPos)) {

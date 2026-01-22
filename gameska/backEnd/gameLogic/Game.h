@@ -18,6 +18,8 @@ public:
 
 private:
     void update(Command cmd);
+    void spawnEnemyInCurrentRoom();  // Nová metoda pro spawn enemy
+    void updateEnemyAI(float deltaTime);  // Nová metoda pro AI enemy
 
     // modules
     RenderEngine m_renderEngine;
@@ -28,6 +30,11 @@ private:
     Player m_player;
     Enemy* m_currentEnemy = nullptr;
     bool m_running;
+
+    // Časovač pro enemy AI
+    float m_enemyAttackTimer = 0.0f;
+    const float m_enemyAttackInterval = 5.0f;  // 5 sekund mezi útoky
+
     Vec2 getSpawnAtEntry(ExitDirection entryDir) const;
     Vec2 getSpawnAtExit(ExitDirection exitDir) const;
 };

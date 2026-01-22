@@ -38,6 +38,12 @@ public:
         if (m_health < 0) m_health = 0;
     }
 
+    // Metoda pro příjem damage
+    void takeDamage(int damage) {
+        m_health -= damage;
+        if (m_health < 0) m_health = 0;
+    }
+
     // Původní metody třídy Player
     void handleCommand(Command cmd);
     void update() override {}
