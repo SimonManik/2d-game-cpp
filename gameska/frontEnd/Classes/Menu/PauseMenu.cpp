@@ -21,23 +21,59 @@ int _getch() {
 }
 #endif
 
-PauseMenu::Action PauseMenu::show() {
-    std::cout << "\n\n    === GAME PAUSED ===\n";
-    std::cout << "    [SPACE]     Resume\n";
-    std::cout << "    [BACKSPACE] Exit to Menu\n";
-    std::cout << "    Choose: ";
 
-    while (true) {
+PauseMenu::Action PauseMenu::show() {
+    bool running = true;
+    int currentSelection = 0;
+
+    while (running) {
+        draw(currentSelection); // vykresleni
+
         int key = _getch();
-        
-        // mezernik
-        if (key == 32) {
-            return RESUME;
+        if (key == 224) key = _getch(); // osetreni sipek na windows
+
+        // ovladani
+        if (key == 'w' || key == 'W' || key == 72) { // Nahoru
+            if (currentSelection > 0) currentSelection--;
         }
-        
-        // Backspace
-        if (key == 8) {
+        else if (key == 's' || key == 'S' || key == 80) { // Dolu
+
+            // 2 moznosti: Resume a Exit to Menu
+            if (currentSelection < 1) currentSelection++;
+        }
+        else if (key == 13 || key == 10) { // ENTER
+             if (currentSelection == 0) {
+                 return RESUME; //
+             } else {
+                 return EXIT_TO_MENU;
+             }
+        }
+        else if (key == 8 || key == 127) {
             return EXIT_TO_MENU;
         }
     }
+    return RESUME;
+}
+
+void PauseMenu::draw(int selectedOption) {
+
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
+    std::cout << "\n\n";
+    std::cout << "        +------------------+\n";
+    std::cout << "        |    PAUSE MENU    |\n";
+    std::cout << "        +------------------+\n";
+    
+    // moznost 1: resume
+    if (selectedOption == 0) std::cout << "        > RESUME <\n";
+    else std::cout << "          RESUME\n";
+
+    // moznost 2: exit the game
+    if (selectedOption == 1) std::cout << "        > EXIT TO MENU <\n";
+    else std::cout << "          EXIT TO MENU\n";
+    
 }

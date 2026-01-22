@@ -3,12 +3,12 @@
 
 class PauseMenu {
 public:
-    enum Action {
-        RESUME,
-        EXIT_TO_MENU
-    };
-    
+    enum Action { RESUME, EXIT_TO_MENU };
+
     static Action show();
+
+private:
+    static void draw(int selectedOption);
 };
 
 #endif
