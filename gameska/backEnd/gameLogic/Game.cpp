@@ -35,8 +35,8 @@ void Game::run() {
         m_player.setPosition(currentMap->getSpawnPoint());
     }
     m_renderEngine.getCamera().setPosition(m_player.getPosition());
-    m_renderEngine.render(m_player, m_renderEngine.getCamera());
-
+    m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentLevel(),
+    m_levelLogic->getCurrentMap());
     while (m_running) {
 
         if (!m_inputHandler.kbhit()) {
@@ -63,7 +63,8 @@ void Game::run() {
         update(cmd);
 
         // render
-        m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentMap());
+        m_renderEngine.render(m_player, m_renderEngine.getCamera(), m_levelLogic->getCurrentLevel(),
+        m_levelLogic->getCurrentMap());
     }
 
     std::cout << "x: " << m_player.getPosition().x << ", y:" << m_player.getPosition().y << std::endl;

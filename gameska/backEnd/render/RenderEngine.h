@@ -17,7 +17,7 @@ public:
     ~RenderEngine();
 
     // main render metoda
-    void render(const Player& player, const Camera& camera, const Map* map = nullptr);
+    void render(const Player& player, const Camera& camera, int currentLevel, const Map* map = nullptr);
 
     // render UI
     // void renderStaticUI();

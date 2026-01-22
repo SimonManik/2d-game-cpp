@@ -62,6 +62,8 @@ add_executable(gameska
         frontEnd/Classes/Skeleton.h
         frontEnd/Classes/Menu/PauseMenu.h
         frontEnd/Classes/Menu/PauseMenu.cpp
+        backEnd/render/UIRender.h
+        backEnd/render/UIRender.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
