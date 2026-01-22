@@ -4,6 +4,7 @@
 
 #include "RenderEngine.h"
 #include "../types/Color.h"
+#include "UIRender.h"
 
 RenderEngine::RenderEngine(int screenW, int screenH)
     : m_buffer(screenW, screenH)
@@ -13,7 +14,7 @@ RenderEngine::RenderEngine(int screenW, int screenH)
 RenderEngine::~RenderEngine() {
 }
 
-void RenderEngine::render(const Player& player, const Camera& camera, const Map* map) {
+void RenderEngine::render(const Player& player, const Camera& camera, int currentLevel, const Map* map) {
     m_buffer.clear();
 
     // Render game world
@@ -25,8 +26,12 @@ void RenderEngine::render(const Player& player, const Camera& camera, const Map*
     renderPlayer(player, camera);
 
     // UIs
-    //renderTempUI();
-    //renderStaticUI();
+    // vykresleni statickeho UI
+    // Předáváme buffer a data z hráče/levelu (nyní včetně maxHealth)
+    UIRender::renderStaticUI(m_buffer, player.getHealth(), player.getMaxHealth(), currentLevel);
+
+    // docasne UI
+    // renderTempUI(m_buffer, "Stiskni [E] pro interakci");
 
     m_buffer.display();
 }

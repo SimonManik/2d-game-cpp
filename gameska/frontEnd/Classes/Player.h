@@ -12,11 +12,30 @@
 #include "../../backEnd/types/Color.h"
 
 class Player : public MainInheriteClass {
+private:
+    // Proměnné pro správu životů, které bude zobrazovat tvůj HUD
+    int m_health;
+    int m_maxHealth;
+
 public:
     Player(Vec2 startPos)
-    : MainInheriteClass(startPos, '@', Color::GREEN, ObjectType::Player) {
+    : MainInheriteClass(startPos, '@', Color::GREEN, ObjectType::Player)
+    , m_health(100)    // Počáteční zdraví
+    , m_maxHealth(100) // Maximální kapacita zdraví
+    {}
+
+    // Gettery pro UIRender, aby věděl, kolik životů vykreslit
+    int getHealth() const { return m_health; }
+    int getMaxHealth() const { return m_maxHealth; }
+
+    // Metoda pro změnu zdraví (využitelná při boji nebo léčení)
+    void changeHealth(int amount) {
+        m_health += amount;
+        if (m_health > m_maxHealth) m_health = m_maxHealth;
+        if (m_health < 0) m_health = 0;
     }
 
+    // Původní metody třídy Player
     void handleCommand(Command cmd);
     void update() override {}
     char getDisplayChar() const { return '@'; }

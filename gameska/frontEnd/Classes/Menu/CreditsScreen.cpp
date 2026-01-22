@@ -1,11 +1,7 @@
-//
-// Created by manik on 13.12.2025.
-//
-#include "StoryScreen.h"
+#include "CreditsScreen.h"
 #include <iostream>
 #include <string>
 
-// === PODMINENE INCLUDOVANI ===
 #ifdef _WIN32
     #include <conio.h>
     #include <windows.h>
@@ -15,16 +11,12 @@
     #include <cstdlib>
 #endif
 
-// Konstanty barev - kvuli applu
 const int COLOR_RED = 4;
 const int COLOR_WHITE = 7;
 const int COLOR_GRAY = 8;
-const int COLOR_BRIGHT_WHITE = 15;
-const int COLOR_NAVY = 1;
 
-//  POMOCNA FUNKCE PRO MAC (Simulace _getch)
 #ifndef _WIN32
-int _getch_story() {
+static int _getch_credits() {
     struct termios oldt, newt;
     int ch;
     tcgetattr(STDIN_FILENO, &oldt);
@@ -37,125 +29,63 @@ int _getch_story() {
 }
 #endif
 
-void StoryScreen::show() {
-    draw();
-    #ifdef _WIN32
-        _getch();
-    #else
-        _getch_story();
-    #endif
-}
-
-// Pomocna funkce pro nastaveni barev uvnitr tohoto souboru
-void setStoryColor(int color) {
+static void setLocalColor(int color) {
 #ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 #else
     switch(color) {
-        case 4: std::cout << "\033[31m"; break;  // Cervena
-        case 7: std::cout << "\033[0m";  break;  // Bila/Reset
-        case 8: std::cout << "\033[90m"; break;  // Seda
-        case 15: std::cout << "\033[97m"; break; // Jasne bila
+        case 4: std::cout << "\033[31m"; break;
+        case 7: std::cout << "\033[0m";  break;
+        case 8: std::cout << "\033[90m"; break;
         default: std::cout << "\033[0m"; break;
     }
 #endif
 }
 
-void StoryScreen::draw() {
+static void printLine(const std::string& text, int color) {
+    setLocalColor(COLOR_RED);
+    std::cout << "        |";
+    setLocalColor(color);
+    int width = 50;
+    int paddingLeft = (width - (int)text.length()) / 2;
+    int paddingRight = width - paddingLeft - (int)text.length();
+    std::cout << std::string(paddingLeft, ' ') << text << std::string(paddingRight, ' ');
+    setLocalColor(COLOR_RED);
+    std::cout << "|" << std::endl;
+}
+
+void CreditsScreen::show() {
+    draw();
+#ifdef _WIN32
+    _getch();
+#else
+    _getch_credits();
+#endif
+}
+
+void CreditsScreen::draw() {
     clearScreen();
-
-    // hlavicka story
-    setColor(COLOR_RED);
-    std::cout << "\n\n";
-    std::cout << "        +--------------------------------------------------+\n";
+    setLocalColor(COLOR_RED);
+    std::cout << "\n\n        +--------------------------------------------------+\n";
     std::cout << "        |                                                  |\n";
-
-    std::cout << "        |                      STORY                       |\n";
-
+    printLine("CREDITS", COLOR_RED);
     std::cout << "        |                                                  |\n";
     std::cout << "        +--------------------------------------------------+\n";
-
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "                                                  ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "     In a world full of pain and suffering...     ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "                                                  ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "     One hero will rise to face the darkness.     ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "   His journey will be full of danger and loss.   ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "                                                  ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    // Zvýraznění
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_RED);   std::cout << "           Can he overcome PAIN & SUFFERING       ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "         and bring light back to this world?      ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    // Oddělovač
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "                                                  ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_RED);   std::cout << "             -----------------------              ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "                                                  ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_GRAY);  std::cout << "       And don't forget, there's light at         ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_GRAY);  std::cout << "       the end of the tunnel, but be careful      ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_GRAY);  std::cout << "          it's not an oncoming train...           ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_WHITE); std::cout << "                                                  ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |";
-    setColor(COLOR_BRIGHT_WHITE); std::cout << "             It all depends on YOU...             ";
-    setColor(COLOR_RED);   std::cout << "|\n";
-
-    setColor(COLOR_RED);   std::cout << "        |                                                  |\n";
-    std::cout << "        +--------------------------------------------------+\n";
-
-    std::cout << "\n";
-    setColor(COLOR_GRAY);
+    std::cout << "        |                                                  |\n";
+    printLine("Backend: Janota & Wolf", COLOR_WHITE);
+    printLine("Frontend: Manik & Nemcova", COLOR_WHITE);
+    printLine("Art & Sound: Team", COLOR_WHITE);
+    std::cout << "        |                                                  |\n";
+    printLine("Made with C++ and Pain", COLOR_GRAY);
+    std::cout << "        |                                                  |\n";
+    std::cout << "        +--------------------------------------------------+\n\n";
+    setLocalColor(COLOR_GRAY);
     std::cout << "               [Press any key to return to menu]\n";
-    setColor(COLOR_WHITE);
+    setLocalColor(COLOR_WHITE);
 }
 
-void StoryScreen::setColor(int color) {
-    setStoryColor(color);
-}
-
-void StoryScreen::clearScreen() {
+void CreditsScreen::setColor(int color) { setLocalColor(color); }
+void CreditsScreen::clearScreen() {
 #ifdef _WIN32
     system("cls");
 #else
