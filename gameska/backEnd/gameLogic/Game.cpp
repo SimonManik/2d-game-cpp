@@ -9,6 +9,8 @@
 #include <thread>
 #include "./../types/Vec2.h"
 #include "../render/RenderEngine.h"
+#include "../../frontEnd/Classes/Menu/PauseMenu.h"
+
 
 Game::Game(int screenW, int screenH)
     : m_renderEngine(screenW, screenH)
@@ -48,6 +50,14 @@ void Game::run() {
         if (cmd == Command::QUIT) {
             m_running = false;
             continue;
+        }
+        
+        if (cmd == Command::PAUSE) {  //pro pauz menu
+            auto action = PauseMenu::show();
+            if (action == PauseMenu::EXIT_TO_MENU) {
+                m_running = false;
+                continue;
+            }
         }
 
         update(cmd);

@@ -70,6 +70,10 @@ char InputHandler::getch() {
 Command InputHandler::getInput() {
     char key = getch();
 
+    if (key == 27) {
+        return Command::PAUSE;
+    }
+
     switch (key) {
         case 'w': case 'W':
             return Command::MOVE_UP;
