@@ -47,7 +47,7 @@ public:
     // Původní metody třídy Player
     void handleCommand(Command cmd);
     void update() override {}
-    char getDisplayChar() const { return '@'; }
+    char getDisplayChar() const override { return '@'; }
 
     // Combat
     int attack() {

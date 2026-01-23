@@ -8,7 +8,7 @@
 #else
 #include <termios.h>
 #include <unistd.h>
-int _getch() {
+static int _getch() {
     struct termios oldt, newt;
     int ch;
     tcgetattr(STDIN_FILENO, &oldt);
