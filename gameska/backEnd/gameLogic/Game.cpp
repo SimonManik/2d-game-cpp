@@ -66,6 +66,9 @@ void Game::run() {
         m_totalTime += elapsed.count();
         lastTick = now;
 
+        // PŘIDEJ TENTO ŘÁDEK:
+        updateEnemyAI((float)elapsed.count());
+
         // 2. KONTROLA VSTUPU (pokud hráč nic nemačká)
         if (!m_inputHandler.kbhit()) {
             // Překreslujeme UI, aby vteřiny na hodinách běžely plynule
@@ -153,7 +156,7 @@ void Game::update(Command cmd) {
             newPos.x == m_currentEnemy->getPosition().x &&
             newPos.y == m_currentEnemy->getPosition().y) {
 
-            std::cout << "\nNarazil jsi na " << m_currentEnemy->getName() << "! Automatický útok!" << std::endl;
+            std::cout << "\nYou encountered " << m_currentEnemy->getName() << "! Automatic attack!" << std::endl;
 
             // Pokud se hráč snaží jít na pozici enemy, zaútočí místo toho
             int damage = m_player.attack();
@@ -161,10 +164,10 @@ void Game::update(Command cmd) {
 
             if (damage > 0) {
                 m_currentEnemy->takeDamage(damage);
-                std::cout << ">>> Způsobil jsi " << damage << " damage! " << m_currentEnemy->getName() << " HP: " << m_currentEnemy->getHealth() << std::endl;
+                std::cout << ">>> You dealt " << damage << " damage! " << m_currentEnemy->getName() << " HP: " << m_currentEnemy->getHealth() << std::endl;
 
                 if (m_currentEnemy->getHealth() <= 0) {
-                    std::cout << "\n*** " << m_currentEnemy->getName() << " BYL PORAŽEN! ***\n" << std::endl;
+                    std::cout << "\n*** " << m_currentEnemy->getName() << " HAS BEEN DEFEATED! ***\n" << std::endl;
                     return;  // Enemy je mrtvý, zmizí při dalším renderu
                 }
             }
@@ -174,12 +177,12 @@ void Game::update(Command cmd) {
                 int enemyDamage = m_currentEnemy->attack();
                 if (enemyDamage > 0) {
                     m_player.takeDamage(enemyDamage);
-                    std::cout << "<<< " << m_currentEnemy->getName() << " útočí! Dostal jsi " << enemyDamage << " damage! Tvoje HP: " << m_player.getHealth() << "/" << m_player.getMaxHealth() << "\n" << std::endl;
+                    std::cout << "<<< " << m_currentEnemy->getName() << " attacks! You took " << enemyDamage << " damage! Your HP: " << m_player.getHealth() << "/" << m_player.getMaxHealth() << "\n" << std::endl;
 
                     // Kontrola smrti hráče
                     if (m_player.getHealth() <= 0) {
                         std::cout << "\n=== GAME OVER ===" << std::endl;
-                        std::cout << "Byl jsi poražen!" << std::endl;
+                        std::cout << "You have been defeated!" << std::endl;
                         m_running = false;
                     }
                 }
@@ -264,9 +267,9 @@ void Game::spawnEnemyInCurrentRoom() {
     // Reset časovače pro nového enemy
     m_enemyAttackTimer = 0.0f;
 
-    std::cout << "\n*** OBJEVIL SE " << enemyName << "! ***" << std::endl;
+    std::cout << "\n*** " << enemyName << " HAS APPEARED! ***" << std::endl;
     std::cout << "Level: " << level << " | HP: " << enemyHealth << std::endl;
-    std::cout << "Útok mezerníkem! Enemy útočí každých 5 sekund!\n" << std::endl;
+    std::cout << "Attack with Space! Enemy attacks every 5 seconds!\n" << std::endl;
 }
 
 void Game::updateEnemyAI(float deltaTime) {
@@ -293,20 +296,20 @@ void Game::updateEnemyAI(float deltaTime) {
             int damage = m_currentEnemy->attack();
             if (damage > 0) {
                 m_player.takeDamage(damage);
-                std::cout << "\n!!! " << m_currentEnemy->getName() << " ÚTOČÍ AUTOMATICKY! !!!" << std::endl;
-                std::cout << "<<< Dostal jsi " << damage << " damage! Tvoje HP: "
+                std::cout << "\n!!! " << m_currentEnemy->getName() << " ATTACKS AUTOMATICALLY! !!!" << std::endl;
+                std::cout << "<<< You took " << damage << " damage! Your HP: "
                           << m_player.getHealth() << "/" << m_player.getMaxHealth() << "\n" << std::endl;
 
                 // Kontrola smrti hráče
                 if (m_player.getHealth() <= 0) {
                     std::cout << "\n=== GAME OVER ===" << std::endl;
-                    std::cout << "Byl jsi poražen " << m_currentEnemy->getName() << "em!" << std::endl;
+                    std::cout << "You were defeated by " << m_currentEnemy->getName() << "!" << std::endl;
                     m_running = false;
                 }
 
                 // Re-render po útoku enemy
                 m_renderEngine.render(m_player, m_renderEngine.getCamera(),
-                                    m_levelLogic->getCurrentLevel(),
+                                    m_levelLogic->getCurrentLevel(), (int)m_totalTime,
                                     m_levelLogic->getCurrentMap());
             }
         }

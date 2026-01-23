@@ -23,14 +23,6 @@ add_executable(gameska
         frontEnd/Classes/Map.cpp
         frontEnd/Classes/MapBlock.cpp
         frontEnd/Classes/MainInheriteClass.cpp
-        frontEnd/Classes/Item.cpp
-        frontEnd/Classes/Weapon.cpp
-        frontEnd/Classes/HealingPotion.cpp
-        frontEnd/Classes/Key.cpp
-        frontEnd/Classes/Dragon.cpp
-        frontEnd/Classes/Rat.cpp
-        frontEnd/Classes/Skeleton.cpp
-        frontEnd/Classes/Spider.cpp
 )
 
 # knihovna pro zvuk

@@ -18,7 +18,12 @@ public:
 
 private:
     void update(Command cmd);
+    void spawnEnemyInCurrentRoom();
+    void updateEnemyAI(float deltaTime);
+
     double m_totalTime = 0.0;
+    float m_enemyAttackTimer = 0.0f;     // Potřebné pro AI
+    float m_enemyAttackInterval = 5.0f;  // Interval útoku
 
     // modules
     RenderEngine m_renderEngine;

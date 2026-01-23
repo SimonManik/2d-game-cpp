@@ -10,8 +10,7 @@ class MapBlock : public MainInheriteClass {
 private:
     bool isPassable; // True = podlaha, False = zed
 
-    //pointer - blok vlastni odkaz na item
-    Item* p_item;
+
 
 public:
     // Konstruktor
@@ -26,9 +25,7 @@ public:
     // Getter
     bool getIsPassable() const { return isPassable; }
 
-    void setItem(Item* newItem);
 
-    Item* getItem();
 };
 
 #endif //MAPBLOCK_H
