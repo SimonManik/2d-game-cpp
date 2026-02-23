@@ -13,7 +13,7 @@ Within the team, I was responsible for the following key areas:
 
 ## 🏗️ Architecture
 * **Back-end:** Custom `RenderEngine` and `ConsoleBuffer` for efficient ASCII graphics rendering in the terminal. Input processing (`InputHandler`) and the main game loop.
-* **Front-end:** Classes for game entities (`Player`, `Enemy`, `Dragon`, `Skeleton`) and interactive items (`Weapon`, `Key`, `HealingPotion`).
+* **Front-end:** UI/UX.
 
 ## ⚙️ How to Build and Run
 The project uses CMake as its build system.
